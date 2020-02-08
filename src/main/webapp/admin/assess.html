@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>考核管理</title>
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+
+	 <!-- 引入angularjs插件 -->
+	<script src="../plugins/angularjs/angular.min.js"></script>
+	
+	<!-- 引入分页插件 -->
+	<script src="../plugins/angularjs/pagination.js"></script>
+	<link rel="stylesheet" href="../plugins/angularjs/pagination.css">
+	<!-- 分页控件结束 -->
+	
+	<!-- 引入angularjs -->
+   	<script src="../js/base-pagination.js"></script>
+   	<script src="../js/controller/baseController.js"></script>
+ 	<script src="../js/service/amAssessService.js"></script>
+ 	<script src="../js/service/baseDictService.js"></script>
+ 	<script src="../js/service/amAssessmouldService.js"></script>
+ 	<script src="../js/service/loginService.js"></script>
+ 	<script src="../js/controller/amAssessController.js"></script>
+
+    
+</head>
+<body class="hold-transition skin-red sidebar-mini" ng-app="junchen" ng-controller="amAssessController" ng-init="findMoulds();findLoginStaff()">
+  <!-- .box-body -->
+                    <div class="box-header with-border">
+                        <h3 class="box-title">考核管理</h3>
+                    </div>
+
+                    <div class="box-body">
+
+                        <!-- 数据表格 -->
+                        <div class="table-box">
+
+                            <!--工具栏-->
+                            <div class="pull-left">
+                                <div class="form-group form-inline">
+                                	 <div class="btn-group" style="margin-right: 8px">
+                                    	<button type="button" class="btn btn-default" title="删除" onclick="window.location.href = 'assessmould.html' "><font color="blue">考核模板管理</font></button>  
+                                    </div>
+                                    <div class="btn-group">
+                                                                        
+                                        <button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#editModal" ng-click="createNewOne()"><i class="fa fa-file-o"></i> 新建</button>
+                                        <button type="button" class="btn btn-default" title="删除" ng-click='dele()'><i class="fa fa-trash-o"></i> 删除</button>           
+                                        <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-tools pull-right">
+                                <div class="has-feedback">
+							                                         
+                                </div>
+                            </div>
+                            <!--工具栏/-->
+
+							<div class="box-tools pull-right">
+                                <div class="has-feedback">
+							    	考核名称：
+							    	<input type="text" ng-model="searchEntity.assessName" style="width: 150px;margin-right: 10px">
+							       	考核模板：
+							       	<select ng-model="searchEntity.assessMould.assessmouldId" style="margin: 0px 6px 0px 0px">
+		      							<option value="">请选择</option>
+		      							<option ng-repeat="pojo in mouldsList" ng-value="pojo.assessmouldId">{{pojo.assessmouldName}}({{pojo.assessmouldType.dictItemName}})</option>
+		      						</select>
+		      						状态：
+		      						<select ng-model="searchEntity.assessEnable" style="margin: 0px 6px 0px 0px">
+		      							<option value="">请选择</option>
+		      							<option value="1">待审批</option>
+		      							<option value="2">已完成</option>
+		      						</select>
+							       	<input type="button" value="查询" class="btn bg-olive btn-xs" ng-click="reloadList()" style="margin-right: 10px">                                  
+                                </div>
+                            </div>
+
+
+			                  <!--数据列表-->
+			                  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+			                      <thead>
+			                          <tr>
+			                              <th class="text-center" width="3%">
+			                                  <input id="selall" type="checkbox" class="icheckbox_square-blue" ng-model='master' ng-click='selectAllCheckBox(master,list)'>
+			                              </th> 
+			                              <th class="text-center" width="7%">考核编号</th>
+										  <th class="sorting_asc" width="25%">考核名称</th>
+									      <th class="text-center" width="9%">考核类型</th>									      
+									      <th class="text-center" width="9%">考核人</th>
+									      <th class="text-center" width="9%">自评时间</th>
+									      <th class="text-center" width="9%">审评人</th>
+									      <th class="text-center" width="9%">审评时间</th>	
+									       <th class="text-center" width="6%">状态</th>	
+									       <th class="text-center" width="6%">总评</th>							     				
+					                      <th class="text-center" width="15%">操作</th>
+			                          </tr>
+			                      </thead>
+			                      <tbody>
+			                          <tr ng-repeat="pojo in list">
+			                              <td class="text-center"><input  type="checkbox" ng-checked='master' ng-click='updateSelect($event,pojo.assessId)'></td>	
+			                              <td class="text-center">{{pojo.assessId}}</td>     
+				                          <td>{{pojo.assessName}}</td>
+									      <td class="text-center">{{pojo.assessMould.assessmouldType.dictItemName}}</td>									     
+		                                  <td class="text-center">{{pojo.assessStaff.staffName}}</td>	
+		                                  <td class="text-center">{{pojo.assessStaffdate}}</td>	  
+		                                  <td class="text-center">{{pojo.assessBoss.staffName}}</td>	
+		                                  <td class="text-center">{{pojo.assessBossdate}}</td>	                                 
+		                                  <td class="text-center">
+											<div ng-if="pojo.assessEnable == 1">待审评</div>
+											<div ng-if="pojo.assessEnable == 2">已完成</div>
+										  </td>	
+										  <td class="text-center">
+											<div ng-if='pojo.assessEnable==2'>
+												<div ng-if='(pojo.assessStaffpoints-0+pojo.assessBosspoints-0)/2*100/pojo.assessMould.assessmouldTotal-0 < 60 '>不及格</div>
+												<div ng-if='(pojo.assessStaffpoints-0+pojo.assessBosspoints-0)/2*100/pojo.assessMould.assessmouldTotal-0 >= 60 && (pojo.assessStaffpoints-0+pojo.assessBosspoints-0)/2*100/pojo.assessMould.assessmouldTotal-0 < 75'>及格</div>
+												<div ng-if='(pojo.assessStaffpoints-0+pojo.assessBosspoints-0)/2*100/pojo.assessMould.assessmouldTotal-0 >= 75 && (pojo.assessStaffpoints-0+pojo.assessBosspoints-0)/2*100/pojo.assessMould.assessmouldTotal-0 <85 '>良好</div>
+												<div ng-if='(pojo.assessStaffpoints-0+pojo.assessBosspoints-0)/2*100/pojo.assessMould.assessmouldTotal-0 >= 85'>优秀</div>
+											</div>		
+										 </td>	
+		                                  <td class="text-center">                                           
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#checkModal"   ng-click="findOne(pojo.assessId)">查看</button> 
+		                                 	  <button type="button" class="btn bg-purple btn-xs" data-toggle="modal" data-target="#approveModal"  ng-click="findOne(pojo.assessId)" ng-if='pojo.assessEnable!=2'>审评</button>                                          
+		                                  </td>
+			                          </tr>
+									 
+			                      </tbody>
+			                  </table>
+			                  <!--数据列表/-->                        
+							  
+							 
+                        </div>
+                        <!-- 数据表格 /-->
+                        
+                         <!-- 分页栏 --> 
+						<tm-pagination conf="paginationConf"></tm-pagination>
+                        
+                        
+                     </div>
+                    <!-- /.box-body -->
+         
+<!-- 编辑窗口 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin: -90px 10px 0px 280px">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">新增考核</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="800px">
+		      	<tr>
+		      		<td>考核主题<font color="red">*</font></td>
+		      		<td colspan="3"><input  class="form-control" placeholder="考核主题" ng-model="entity.assess.assessName" ng-trim='true'>  </td>
+		      	</tr>		      	
+		      	<tr>
+		      		<td>考核模板<font color="red">*</font></td>
+		      		<td colspan="3">
+		      			<select name="mouldSelect" id="mouldSelect" ng-model="mouldSelect" >
+		      				<option value="" selected>--请选择--</option>
+		      				<option ng-repeat="pojo in mouldsList" ng-value="pojo.assessmouldId">{{pojo.assessmouldName}}</option>
+		      			</select>
+		      		</td>
+		      	</tr>	
+		      	
+		      	
+		      	<tr><td colspan="4">
+		      	
+		      	<table class="table table-bordered table-striped table-hover dataTable">
+		      			<thead >
+	                        <tr>
+						      <th class="text-center" width="33%">模板类型</th>
+						      <th class="text-center" width="34%">模板总分(分)：</th>																
+		               		 <th class="text-center" width="33%">模板创建人</th>
+		                   </tr>
+	                    </thead>
+	                     <tbody>
+		                      <tr>
+		 							<td class="text-center">
+						            	{{entity.assess.assessMould.assessmouldType.dictItemName}}
+						            </td>
+						            <td class="text-center">
+						            	{{entity.assess.assessMould.assessmouldTotal}}
+						            </td>
+									<td class="text-center">
+						            	{{entity.assess.assessMould.assessmouldStaff.staffName}}
+						            </td>
+		                      </tr>
+		                    </tbody>
+		      		</table>	
+		      	
+		      	
+			      	<table class="table table-bordered table-striped table-hover dataTable">
+			      		
+		                    <thead>
+		                        <tr>
+							      <th class="text-center" width="66%">考核细则</th>
+							      <th class="text-center" width="15%">单项总分</th>																
+			               		 <th class="text-center" width="19%">自我评分</th>
+			                   </tr>
+		                    </thead>
+		                    <tbody>
+		                      <tr ng-repeat="point in entity.assessPoints">
+		 							<td>
+						            	<input  class="form-control"  ng-model="point.assesspointRule.assessruleName" readonly="readonly"> 
+						            </td>
+						            <td>
+						            	<input  class="form-control" ng-model="point.assesspointRule.assessrulePoint" readonly="readonly">
+						            </td>
+									<td>
+						            	<input type="range" style="width: 55px;margin-left: 5px;display: inline;margin-right: 3px" min="0" max="{{point.assesspointRule.assessrulePoint}}" maxlength="2" ng-model="point.assesspointStaffpoint">
+						            	{{point.assesspointStaffpoint}}
+						            	<!-- ng-keyup='checkPoint(point.assesspointStaffpoint,point.assesspointRule.assessrulePoint)' -->
+						            	
+						            </td>
+		                      </tr>
+		                    </tbody>
+				  		</table> 
+		      	</td></tr>
+		      	
+		      	<tr>
+		      		<td width="13%">自评人</td>
+		      		<td width="23%"><input  class="form-control" placeholder="自评人" ng-model="entity.assess.assessStaff.staffName" readonly="readonly">  </td>
+		      		<td width="13%">自评时间</td>
+		      		<td width="23%"><input  class="form-control" placeholder="自评时间" ng-model="entity.assess.assessStaffdate" readonly="readonly">  </td>
+		      
+		      	</tr>		
+		      				      	
+			 </table>				
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click='save()' ng-onsubmit="return go()">保存</button>
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+   
+   
+   <!-- 审评窗口 -->
+<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin: -90px 10px 0px 280px">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">考核审评</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="800px">
+		      	<tr>
+		      		<td>考核主题<font color="red">*</font></td>
+		      		<td colspan="3"><input  class="form-control" placeholder="考核主题" ng-model="entity.assess.assessName" ng-trim='true' readonly="readonly">  </td>
+		      	</tr>		      	
+		      	<tr>
+		      		<td>考核模板<font color="red">*</font></td>
+		      		<td colspan="3">
+		      			<input  class="form-control" readonly="readonly" ng-model="entity.assess.assessMould.assessmouldName">
+		      			
+		      		</td>
+		      	</tr>	
+		      	
+		      	
+		      	<tr><td colspan="4">
+		      	
+		      	<table class="table table-bordered table-striped table-hover dataTable">
+		      			<thead >
+	                        <tr>
+						      <th class="text-center" width="33%">模板类型</th>
+						      <th class="text-center" width="34%">模板总分(分)：</th>																
+		               		 <th class="text-center" width="33%">模板创建人</th>
+		                   </tr>
+	                    </thead>
+	                     <tbody>
+		                      <tr>
+		 							<td class="text-center">
+						            	{{entity.assess.assessMould.assessmouldType.dictItemName}}
+						            </td>
+						            <td class="text-center">
+						            	{{entity.assess.assessMould.assessmouldTotal}}
+						            </td>
+									<td class="text-center">
+						            	{{entity.assess.assessMould.assessmouldStaff.staffName}}
+						            </td>
+						           
+		                      </tr>
+		                    </tbody>
+		      		</table>	
+		      	
+		      	
+			      	<table class="table table-bordered table-striped table-hover dataTable">
+			      		
+		                    <thead>
+		                        <tr>
+							      <th class="text-center" width="53%">考核细则</th>
+							      <th class="text-center" width="14%">单项总分</th>																
+			               		 <th class="text-center" width="14%">自我评分</th>
+			               		 <th class="text-center" width="19%">审评评分</th>
+			                   </tr>
+		                    </thead>
+		                    <tbody>
+		                      <tr ng-repeat="point in entity.assessPoints">
+		 							<td>
+						            	<input  class="form-control"  ng-model="point.assesspointRule.assessruleName" readonly="readonly"> 
+						            </td>
+						            <td>
+						            	<input  class="form-control" ng-model="point.assesspointRule.assessrulePoint" readonly="readonly">
+						            </td>
+									<td>
+							            <div >
+							            <input  class="form-control" ng-model="point.assesspointStaffpoint" readonly="readonly">
+							            </div>	
+						            
+						            </td>
+						             <td>
+						            	<input type="range" style="width: 55px;margin-left: 5px;display: inline;margin-right: 3px" min="0" max="{{point.assesspointRule.assessrulePoint}}" maxlength="2" ng-model="point.assesspointBosspoint">
+						            	{{point.assesspointBosspoint}}
+						        
+						            	
+						            </td>
+		                      </tr>
+		                    </tbody>
+				  		</table> 
+		      	</td></tr>
+		      	
+		      	<tr>
+		      		<td width="13%">自评人</td>
+		      		<td width="23%"><input  class="form-control" placeholder="自评人" ng-model="entity.assess.assessStaff.staffName" readonly="readonly">  </td>
+		      		<td width="13%">自评时间</td>
+		      		<td width="23%"><input  class="form-control" placeholder="自评时间" ng-model="entity.assess.assessStaffdate" readonly="readonly">  </td>
+		      
+		      	</tr>		
+		      	<tr>
+		      		<td width="13%">审评人</td>
+		      		<td width="23%"><input  class="form-control" placeholder="审评人" ng-model="entity.assess.assessBoss.staffName" readonly="readonly">  </td>
+		      		<td width="13%">审评时间</td>
+		      		<td width="23%"><input  class="form-control" placeholder="审评时间" ng-model="entity.assess.assessBossdate" readonly="readonly">  </td>
+		      
+		      	</tr>	
+		      	
+		      	<tr>
+		      		<td>审评小结</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="审评小结" ng-model="entity.assess.assessSummary" ></td>
+		      	</tr>
+		      			      	
+			 </table>				
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click='save()' ng-onsubmit="return go()">保存</button>
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+   
+   
+    <!-- 查看窗口 -->
+<div class="modal fade" id="checkModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin: -90px 10px 0px 280px">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">考核查看</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="800px">
+		      	<tr>
+		      		<td>考核主题<font color="red">*</font></td>
+		      		<td colspan="3"><input  class="form-control" placeholder="考核主题" ng-model="entity.assess.assessName" ng-trim='true' readonly="readonly">  </td>
+		      	</tr>		      	
+		      	<tr>
+		      		<td>考核模板<font color="red">*</font></td>
+		      		<td colspan="3">
+		      			<input  class="form-control" readonly="readonly" ng-model="entity.assess.assessMould.assessmouldName">
+		      			
+		      		</td>
+		      	</tr>	
+		      	
+		      	
+		      	<tr><td colspan="4">
+		      	
+		      	<table class="table table-bordered table-striped table-hover dataTable">
+		      			<thead >
+	                        <tr>
+						      <th class="text-center" width="33%">模板类型</th>
+						      <th class="text-center" width="34%">模板总分(分)：</th>																
+		               		 <th class="text-center" width="33%">模板创建人</th>
+		                   </tr>
+	                    </thead>
+	                     <tbody>
+		                      <tr>
+		 							<td class="text-center">
+						            	{{entity.assess.assessMould.assessmouldType.dictItemName}}
+						            </td>
+						            <td class="text-center">
+						            	{{entity.assess.assessMould.assessmouldTotal}}
+						            </td>
+									<td class="text-center">
+						            	{{entity.assess.assessMould.assessmouldStaff.staffName}}
+						            </td>
+						           
+		                      </tr>
+		                    </tbody>
+		      		</table>	
+		      	
+		      	
+			      	<table class="table table-bordered table-striped table-hover dataTable">
+			      		
+		                    <thead>
+		                        <tr>
+							      <th class="text-center" width="53%">考核细则</th>
+							      <th class="text-center" width="14%">单项总分</th>																
+			               		 <th class="text-center" width="14%">自我评分</th>
+			               		 <th class="text-center" width="19%">审评评分</th>
+			                   </tr>
+		                    </thead>
+		                    <tbody>
+		                      <tr ng-repeat="point in entity.assessPoints">
+		 							<td>
+						            	<input  class="form-control"  ng-model="point.assesspointRule.assessruleName" readonly="readonly"> 
+						            </td>
+						            <td>
+						            	<input  class="form-control" ng-model="point.assesspointRule.assessrulePoint" readonly="readonly">
+						            </td>
+									<td>
+							            <div >
+							            <input  class="form-control" ng-model="point.assesspointStaffpoint" readonly="readonly">
+							            </div>	
+						            
+						            </td>
+						             <td>
+						              <input  class="form-control" ng-model="point.assesspointBosspoint" readonly="readonly">
+						            	
+						        
+						            	
+						            </td>
+		                      </tr>
+		                    </tbody>
+				  		</table> 
+				  		
+				  		<table class="table table-bordered table-striped table-hover dataTable">
+		      			<thead >
+	                        <tr>
+						      <th class="text-center" width="23%">自评总分(分)</th>
+						      <th class="text-center" width="23%">审评总分(分)</th>																
+		               		 <th class="text-center" width="31%">总分(已换算为百分制)</th>
+		               		 <th class="text-center" width="23%">总评</th>
+		                   </tr>
+	                    </thead>
+	                     <tbody>
+		                      <tr>
+		 							<td class="text-center">
+						            	{{entity.assess.assessStaffpoints}}
+						            </td>
+						            <td class="text-center">
+						            	{{entity.assess.assessBosspoints}}
+						            </td>
+									<td class="text-center">
+						            	{{(entity.assess.assessStaffpoints-0+entity.assess.assessBosspoints-0)/2*100/entity.assess.assessMould.assessmouldTotal-0}}
+						            </td>
+						            <td class="text-center">
+							           <div ng-if='(entity.assess.assessStaffpoints-0+entity.assess.assessBosspoints-0)/2*100/entity.assess.assessMould.assessmouldTotal-0 < 60 '>不及格</div>
+										<div ng-if='(entity.assess.assessStaffpoints-0+entity.assess.assessBosspoints-0)/2*100/entity.assess.assessMould.assessmouldTotal-0 >= 60 && (entity.assess.assessStaffpoints-0+entity.assess.assessBosspoints-0)/2*100/entity.assess.assessMould.assessmouldTotal-0 < 75'>及格</div>
+										<div ng-if='(entity.assess.assessStaffpoints-0+entity.assess.assessBosspoints-0)/2*100/entity.assess.assessMould.assessmouldTotal-0 >= 75 && (entity.assess.assessStaffpoints-0+entity.assess.assessBosspoints-0)/2*100/entity.assess.assessMould.assessmouldTotal-0 <85 '>良好</div>
+										<div ng-if='(entity.assess.assessStaffpoints-0+entity.assess.assessBosspoints-0)/2*100/entity.assess.assessMould.assessmouldTotal-0 >= 85'>优秀</div>
+		                      		</td>
+		                      </tr>
+		                    </tbody>
+		      		</table>	
+				  		
+				  		
+		      	</td></tr>
+		      	
+		      	<tr>
+		      		<td width="13%">自评人</td>
+		      		<td width="23%"><input  class="form-control" placeholder="自评人" ng-model="entity.assess.assessStaff.staffName" readonly="readonly">  </td>
+		      		<td width="13%">自评时间</td>
+		      		<td width="23%"><input  class="form-control" placeholder="自评时间" ng-model="entity.assess.assessStaffdate" readonly="readonly">  </td>
+		      
+		      	</tr>		
+		      	<tr>
+		      		<td width="13%">审评人</td>
+		      		<td width="23%"><input  class="form-control" placeholder="审评人" ng-model="entity.assess.assessBoss.staffName" readonly="readonly">  </td>
+		      		<td width="13%">审评时间</td>
+		      		<td width="23%"><input  class="form-control" placeholder="审评时间" ng-model="entity.assess.assessBossdate" readonly="readonly">  </td>
+		      
+		      	</tr>	
+		      	
+		      	<tr>
+		      		<td>审评小结</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="审评小结" ng-model="entity.assess.assessSummary" readonly="readonly"></td>
+		      	</tr>
+		      			      	
+			 </table>				
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click='save()' ng-onsubmit="return go()">保存</button>
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+   
+   
+   
+   
+</body>
+
+</html>

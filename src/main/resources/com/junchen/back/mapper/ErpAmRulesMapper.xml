@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.junchen.back.mapper.ErpAmRulesMapper">
+  <resultMap id="BaseResultMap" type="com.junchen.back.pojo.ErpAmRules">
+    <id column="rules_id" jdbcType="BIGINT" property="rulesId" />
+    <result column="rules_name" jdbcType="VARCHAR" property="rulesName" />
+    <result column="rules_url" jdbcType="VARCHAR" property="rulesUrl" />
+    <result column="rules_datetime" jdbcType="VARCHAR" property="rulesDatetime" />
+    <result column="rules_enable" jdbcType="CHAR" property="rulesEnable" />
+    <association property="rulesStaff" column="rules_staff" select="ruleStaffSelect"/>
+  </resultMap>
+<select id="ruleStaffSelect" resultMap="rule_staff">
+	SELECT `erp_am_staff`.`staff_id`,
+    `erp_am_staff`.`staff_name`,
+    `erp_am_staff`.`staff_enable`
+	FROM `erp`.`erp_am_staff`
+	where staff_id = #{staff_id};
+</select>
+<resultMap id="rule_staff" type="com.junchen.back.pojo.ErpAmStaff" >
+	<id column="staff_id" property="staffId" jdbcType="BIGINT" />
+   	<result column="staff_name" property="staffName" jdbcType="VARCHAR" />
+   	<result column="staff_enable" jdbcType="CHAR" property="staffEnable" />
+</resultMap>
+
+
+  <sql id="Example_Where_Clause">
+    <!-- <where> -->
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    <!-- </where> -->
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    rules_id, rules_name, rules_url, rules_datetime, rules_staff, rules_enable
+  </sql>
+  <select id="selectByExample" parameterType="com.junchen.back.pojo.ErpAmRulesExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from erp_am_rules
+    <where>
+	    <if test="_parameter != null">
+	      <include refid="Example_Where_Clause" />
+	    </if>
+		and rules_enable = '1'
+    </where>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from erp_am_rules
+    where rules_id = #{rulesId,jdbcType=BIGINT}
+  </select>
+<!--   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from erp_am_rules
+    where rules_id = #{rulesId,jdbcType=BIGINT}
+  </delete> -->
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update  erp_am_rules
+    set rules_enable = '0'
+    where rules_id = #{rulesId,jdbcType=BIGINT}
+  </update>
+  <delete id="deleteByExample" parameterType="com.junchen.back.pojo.ErpAmRulesExample">
+    delete from erp_am_rules
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.junchen.back.pojo.ErpAmRules">
+    insert into erp_am_rules (rules_id, rules_name, rules_url, 
+      rules_datetime, rules_staff, rules_enable
+      )
+    values (#{rulesId,jdbcType=BIGINT}, #{rulesName,jdbcType=VARCHAR}, #{rulesUrl,jdbcType=VARCHAR}, 
+      #{rulesDatetime,jdbcType=VARCHAR}, #{rulesStaff.staffId,jdbcType=BIGINT}, #{rulesEnable,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.junchen.back.pojo.ErpAmRules">
+    insert into erp_am_rules
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="rulesId != null">
+        rules_id,
+      </if>
+      <if test="rulesName != null">
+        rules_name,
+      </if>
+      <if test="rulesUrl != null">
+        rules_url,
+      </if>
+      <if test="rulesDatetime != null">
+        rules_datetime,
+      </if>
+      <if test="rulesStaff != null">
+        rules_staff,
+      </if>
+      <if test="rulesEnable != null">
+        rules_enable,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="rulesId != null">
+        #{rulesId,jdbcType=BIGINT},
+      </if>
+      <if test="rulesName != null">
+        #{rulesName,jdbcType=VARCHAR},
+      </if>
+      <if test="rulesUrl != null">
+        #{rulesUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="rulesDatetime != null">
+        #{rulesDatetime,jdbcType=VARCHAR},
+      </if>
+      <if test="rulesStaff != null">
+        #{rulesStaff.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="rulesEnable != null">
+        #{rulesEnable,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.junchen.back.pojo.ErpAmRulesExample" resultType="java.lang.Integer">
+    select count(*) from erp_am_rules
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update erp_am_rules
+    <set>
+      <if test="record.rulesId != null">
+        rules_id = #{record.rulesId,jdbcType=BIGINT},
+      </if>
+      <if test="record.rulesName != null">
+        rules_name = #{record.rulesName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rulesUrl != null">
+        rules_url = #{record.rulesUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rulesDatetime != null">
+        rules_datetime = #{record.rulesDatetime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rulesStaff != null">
+        rules_staff = #{record.rulesStaff.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="record.rulesEnable != null">
+        rules_enable = #{record.rulesEnable,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update erp_am_rules
+    set rules_id = #{record.rulesId,jdbcType=BIGINT},
+      rules_name = #{record.rulesName,jdbcType=VARCHAR},
+      rules_url = #{record.rulesUrl,jdbcType=VARCHAR},
+      rules_datetime = #{record.rulesDatetime,jdbcType=VARCHAR},
+      rules_staff = #{record.rulesStaff.staffId,jdbcType=BIGINT},
+      rules_enable = #{record.rulesEnable,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.junchen.back.pojo.ErpAmRules">
+    update erp_am_rules
+    <set>
+      <if test="rulesName != null">
+        rules_name = #{rulesName,jdbcType=VARCHAR},
+      </if>
+      <if test="rulesUrl != null">
+        rules_url = #{rulesUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="rulesDatetime != null">
+        rules_datetime = #{rulesDatetime,jdbcType=VARCHAR},
+      </if>
+      <if test="rulesStaff != null">
+        rules_staff = #{rulesStaff.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="rulesEnable != null">
+        rules_enable = #{rulesEnable,jdbcType=CHAR},
+      </if>
+    </set>
+    where rules_id = #{rulesId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.junchen.back.pojo.ErpAmRules">
+    update erp_am_rules
+    set rules_name = #{rulesName,jdbcType=VARCHAR},
+      rules_url = #{rulesUrl,jdbcType=VARCHAR},
+      rules_datetime = #{rulesDatetime,jdbcType=VARCHAR},
+      rules_staff = #{rulesStaff.staffId,jdbcType=BIGINT},
+      rules_enable = #{rulesEnable,jdbcType=CHAR}
+    where rules_id = #{rulesId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByStaffId" resultMap="BaseResultMap">
+  	select distinct rules_staff from erp_am_rules
+  </select>
+  
+</mapper>

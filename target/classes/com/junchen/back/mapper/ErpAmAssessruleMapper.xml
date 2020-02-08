@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.junchen.back.mapper.ErpAmAssessruleMapper" >
+  <resultMap id="BaseResultMap" type="com.junchen.back.pojo.ErpAmAssessrule" >
+    <id column="assessrule_id" property="assessruleId" jdbcType="INTEGER" />
+    <result column="assessrule_name" property="assessruleName" jdbcType="VARCHAR" />
+    <result column="assessrule_point" property="assessrulePoint" jdbcType="BIGINT" />
+    <result column="assessrule_mould" property="assessruleMould" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    assessrule_id, assessrule_name, assessrule_point, assessrule_mould
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.junchen.back.pojo.ErpAmAssessruleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from erp_am_assessrule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from erp_am_assessrule
+    where assessrule_id = #{assessruleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from erp_am_assessrule
+    where assessrule_id = #{assessruleId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.junchen.back.pojo.ErpAmAssessruleExample" >
+    delete from erp_am_assessrule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.junchen.back.pojo.ErpAmAssessrule" >
+    insert into erp_am_assessrule (assessrule_id, assessrule_name, assessrule_point, 
+      assessrule_mould)
+    values (#{assessruleId,jdbcType=INTEGER}, #{assessruleName,jdbcType=VARCHAR}, #{assessrulePoint,jdbcType=BIGINT}, 
+      #{assessruleMould,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.junchen.back.pojo.ErpAmAssessrule" >
+    insert into erp_am_assessrule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="assessruleId != null" >
+        assessrule_id,
+      </if>
+      <if test="assessruleName != null" >
+        assessrule_name,
+      </if>
+      <if test="assessrulePoint != null" >
+        assessrule_point,
+      </if>
+      <if test="assessruleMould != null" >
+        assessrule_mould,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="assessruleId != null" >
+        #{assessruleId,jdbcType=INTEGER},
+      </if>
+      <if test="assessruleName != null" >
+        #{assessruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="assessrulePoint != null" >
+        #{assessrulePoint,jdbcType=BIGINT},
+      </if>
+      <if test="assessruleMould != null" >
+        #{assessruleMould,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.junchen.back.pojo.ErpAmAssessruleExample" resultType="java.lang.Integer" >
+    select count(*) from erp_am_assessrule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update erp_am_assessrule
+    <set >
+      <if test="record.assessruleId != null" >
+        assessrule_id = #{record.assessruleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.assessruleName != null" >
+        assessrule_name = #{record.assessruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.assessrulePoint != null" >
+        assessrule_point = #{record.assessrulePoint,jdbcType=BIGINT},
+      </if>
+      <if test="record.assessruleMould != null" >
+        assessrule_mould = #{record.assessruleMould,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update erp_am_assessrule
+    set assessrule_id = #{record.assessruleId,jdbcType=INTEGER},
+      assessrule_name = #{record.assessruleName,jdbcType=VARCHAR},
+      assessrule_point = #{record.assessrulePoint,jdbcType=BIGINT},
+      assessrule_mould = #{record.assessruleMould,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.junchen.back.pojo.ErpAmAssessrule" >
+    update erp_am_assessrule
+    <set >
+      <if test="assessruleName != null" >
+        assessrule_name = #{assessruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="assessrulePoint != null" >
+        assessrule_point = #{assessrulePoint,jdbcType=BIGINT},
+      </if>
+      <if test="assessruleMould != null" >
+        assessrule_mould = #{assessruleMould,jdbcType=BIGINT},
+      </if>
+    </set>
+    where assessrule_id = #{assessruleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.junchen.back.pojo.ErpAmAssessrule" >
+    update erp_am_assessrule
+    set assessrule_name = #{assessruleName,jdbcType=VARCHAR},
+      assessrule_point = #{assessrulePoint,jdbcType=BIGINT},
+      assessrule_mould = #{assessruleMould,jdbcType=BIGINT}
+    where assessrule_id = #{assessruleId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByMouldId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+  	select <include refid="Base_Column_List"></include>
+  	from erp_am_assessrule
+  	where assessrule_mould = #{id};
+  </select>
+  
+</mapper>

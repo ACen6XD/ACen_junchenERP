@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.junchen.back.mapper.ErpSysUserMapper">
+	<sql id="Base_Column_List">
+		user_id,user_loginname,user_password,user_permission,user_role,user_enable,user_staffid
+	</sql>
+	<resultMap type="com.junchen.back.pojo.ErpSysUser" id="erpSysUser">
+		<id column="user_id" property="user_id"/>
+		<result property="user_loginName" column="user_loginname"/>
+		<result property="user_password" column="user_password"/>
+		<result property="user_permission" column="user_permission"/>
+		<result property="user_role" column="user_role"/>
+		<result property="user_enable" column="user_enable"/>
+		<result property="user_staffid" column="user_staffid"/>
+	</resultMap>
+
+	<select id="login" parameterType="java.lang.String" resultMap="erpSysUser">
+		select 
+		<include refid="Base_Column_List"></include>
+		from erp.erp_sys_user
+		<where>
+			user_loginName = #{loginName} 
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.junchen.back.mapper.ErpAmAddressbookMapper" >
+  <resultMap id="BaseResultMap" type="com.junchen.back.pojo.ErpAmAddressbook" >
+    <id column="addressbook_id" property="addressbookId" jdbcType="BIGINT" />
+    <result column="addressbook_name" property="addressbookName" jdbcType="VARCHAR" />
+    <result column="addressbook_gender" property="addressbookGender" jdbcType="VARCHAR" />
+    <result column="addressbook_qq" property="addressbookQq" jdbcType="VARCHAR" />
+    <result column="addressbook_telephone" property="addressbookTelephone" jdbcType="VARCHAR" />
+    <result column="addressbook_phone" property="addressbookPhone" jdbcType="VARCHAR" />
+    <result column="addressbook_wechat" property="addressbookWechat" jdbcType="VARCHAR" />
+    <result column="addressbook_fax" property="addressbookFax" jdbcType="VARCHAR" />
+    <result column="addressbook_email" property="addressbookEmail" jdbcType="VARCHAR" />
+    <result column="addressbook_companyname" property="addressbookCompanyname" jdbcType="VARCHAR" />
+    <result column="addressbook_companyphone" property="addressbookCompanyphone" jdbcType="VARCHAR" />
+    <result column="addressbook_companyaddress" property="addressbookCompanyaddress" jdbcType="VARCHAR" />
+    <result column="addressbook_companyweb" property="addressbookCompanyweb" jdbcType="VARCHAR" />
+    <result column="addressbook_memo" property="addressbookMemo" jdbcType="VARCHAR" />
+    <result column="addressbook_enable" property="addressbookEnable" jdbcType="CHAR" />
+    <result column="addressbook_job" property="addressbookJob" jdbcType="VARCHAR" />
+  
+    <association property="addressbookStaff" column="addressbook_staff"  select="com.junchen.back.mapper.ErpAmRulesMapper.ruleStaffSelect"/>
+    	
+  </resultMap>
+  
+  <sql id="Example_Where_Clause" >
+    <!-- <where > -->
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+   <!--  </where> -->
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <!-- <where > -->
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    <!-- </where> -->
+  </sql>
+  <sql id="Base_Column_List" >
+    addressbook_id, addressbook_name, addressbook_gender, addressbook_qq, addressbook_telephone, 
+    addressbook_phone, addressbook_wechat, addressbook_fax, addressbook_email, addressbook_companyname, 
+    addressbook_companyphone, addressbook_companyaddress, addressbook_companyweb, addressbook_memo, 
+    addressbook_enable, addressbook_job, addressbook_staff
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.junchen.back.pojo.ErpAmAddressbookExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from erp_am_addressbook
+    <where>
+	    <if test="_parameter != null" >
+	      <include refid="Example_Where_Clause" />
+	    </if>
+	    and addressbook_enable = '1'
+	</where>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from erp_am_addressbook
+    where addressbook_id = #{addressbookId,jdbcType=BIGINT}
+  </select>
+  <!-- <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from erp_am_addressbook
+    where addressbook_id = #{addressbookId,jdbcType=BIGINT}
+  </delete> -->
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+  	update erp_am_addressbook
+  	set addressbook_enable = '0'
+  	where addressbook_id = #{id};
+  </update>
+  <delete id="deleteByExample" parameterType="com.junchen.back.pojo.ErpAmAddressbookExample" >
+    delete from erp_am_addressbook
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.junchen.back.pojo.ErpAmAddressbook" >
+    insert into erp_am_addressbook (addressbook_id, addressbook_name, addressbook_gender, 
+      addressbook_qq, addressbook_telephone, addressbook_phone, 
+      addressbook_wechat, addressbook_fax, addressbook_email, 
+      addressbook_companyname, addressbook_companyphone, 
+      addressbook_companyaddress, addressbook_companyweb, 
+      addressbook_memo, addressbook_enable, addressbook_job, 
+      addressbook_staff)
+    values (#{addressbookId,jdbcType=BIGINT}, #{addressbookName,jdbcType=VARCHAR}, #{addressbookGender,jdbcType=VARCHAR}, 
+      #{addressbookQq,jdbcType=VARCHAR}, #{addressbookTelephone,jdbcType=VARCHAR}, #{addressbookPhone,jdbcType=VARCHAR}, 
+      #{addressbookWechat,jdbcType=VARCHAR}, #{addressbookFax,jdbcType=VARCHAR}, #{addressbookEmail,jdbcType=VARCHAR}, 
+      #{addressbookCompanyname,jdbcType=VARCHAR}, #{addressbookCompanyphone,jdbcType=VARCHAR}, 
+      #{addressbookCompanyaddress,jdbcType=VARCHAR}, #{addressbookCompanyweb,jdbcType=VARCHAR}, 
+      #{addressbookMemo,jdbcType=VARCHAR}, #{addressbookEnable,jdbcType=CHAR}, #{addressbookJob,jdbcType=VARCHAR}, 
+      #{addressbookStaff.staffId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.junchen.back.pojo.ErpAmAddressbook" >
+    insert into erp_am_addressbook
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="addressbookId != null" >
+        addressbook_id,
+      </if>
+      <if test="addressbookName != null" >
+        addressbook_name,
+      </if>
+      <if test="addressbookGender != null" >
+        addressbook_gender,
+      </if>
+      <if test="addressbookQq != null" >
+        addressbook_qq,
+      </if>
+      <if test="addressbookTelephone != null" >
+        addressbook_telephone,
+      </if>
+      <if test="addressbookPhone != null" >
+        addressbook_phone,
+      </if>
+      <if test="addressbookWechat != null" >
+        addressbook_wechat,
+      </if>
+      <if test="addressbookFax != null" >
+        addressbook_fax,
+      </if>
+      <if test="addressbookEmail != null" >
+        addressbook_email,
+      </if>
+      <if test="addressbookCompanyname != null" >
+        addressbook_companyname,
+      </if>
+      <if test="addressbookCompanyphone != null" >
+        addressbook_companyphone,
+      </if>
+      <if test="addressbookCompanyaddress != null" >
+        addressbook_companyaddress,
+      </if>
+      <if test="addressbookCompanyweb != null" >
+        addressbook_companyweb,
+      </if>
+      <if test="addressbookMemo != null" >
+        addressbook_memo,
+      </if>
+      <if test="addressbookEnable != null" >
+        addressbook_enable,
+      </if>
+      <if test="addressbookJob != null" >
+        addressbook_job,
+      </if>
+      <if test="addressbookStaff != null" >
+        addressbook_staff,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="addressbookId != null" >
+        #{addressbookId,jdbcType=BIGINT},
+      </if>
+      <if test="addressbookName != null" >
+        #{addressbookName,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookGender != null" >
+        #{addressbookGender,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookQq != null" >
+        #{addressbookQq,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookTelephone != null" >
+        #{addressbookTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookPhone != null" >
+        #{addressbookPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookWechat != null" >
+        #{addressbookWechat,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookFax != null" >
+        #{addressbookFax,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookEmail != null" >
+        #{addressbookEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookCompanyname != null" >
+        #{addressbookCompanyname,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookCompanyphone != null" >
+        #{addressbookCompanyphone,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookCompanyaddress != null" >
+        #{addressbookCompanyaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookCompanyweb != null" >
+        #{addressbookCompanyweb,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookMemo != null" >
+        #{addressbookMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookEnable != null" >
+        #{addressbookEnable,jdbcType=CHAR},
+      </if>
+      <if test="addressbookJob != null" >
+        #{addressbookJob,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookStaff != null" >
+        #{addressbookStaff.staffId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.junchen.back.pojo.ErpAmAddressbookExample" resultType="java.lang.Integer" >
+    select count(*) from erp_am_addressbook
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update erp_am_addressbook
+    <set >
+      <if test="record.addressbookId != null" >
+        addressbook_id = #{record.addressbookId,jdbcType=BIGINT},
+      </if>
+      <if test="record.addressbookName != null" >
+        addressbook_name = #{record.addressbookName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookGender != null" >
+        addressbook_gender = #{record.addressbookGender,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookQq != null" >
+        addressbook_qq = #{record.addressbookQq,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookTelephone != null" >
+        addressbook_telephone = #{record.addressbookTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookPhone != null" >
+        addressbook_phone = #{record.addressbookPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookWechat != null" >
+        addressbook_wechat = #{record.addressbookWechat,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookFax != null" >
+        addressbook_fax = #{record.addressbookFax,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookEmail != null" >
+        addressbook_email = #{record.addressbookEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookCompanyname != null" >
+        addressbook_companyname = #{record.addressbookCompanyname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookCompanyphone != null" >
+        addressbook_companyphone = #{record.addressbookCompanyphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookCompanyaddress != null" >
+        addressbook_companyaddress = #{record.addressbookCompanyaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookCompanyweb != null" >
+        addressbook_companyweb = #{record.addressbookCompanyweb,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookMemo != null" >
+        addressbook_memo = #{record.addressbookMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookEnable != null" >
+        addressbook_enable = #{record.addressbookEnable,jdbcType=CHAR},
+      </if>
+      <if test="record.addressbookJob != null" >
+        addressbook_job = #{record.addressbookJob,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressbookStaff != null" >
+        addressbook_staff = #{record.addressbookStaff.staffId,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update erp_am_addressbook
+    set addressbook_id = #{record.addressbookId,jdbcType=BIGINT},
+      addressbook_name = #{record.addressbookName,jdbcType=VARCHAR},
+      addressbook_gender = #{record.addressbookGender,jdbcType=VARCHAR},
+      addressbook_qq = #{record.addressbookQq,jdbcType=VARCHAR},
+      addressbook_telephone = #{record.addressbookTelephone,jdbcType=VARCHAR},
+      addressbook_phone = #{record.addressbookPhone,jdbcType=VARCHAR},
+      addressbook_wechat = #{record.addressbookWechat,jdbcType=VARCHAR},
+      addressbook_fax = #{record.addressbookFax,jdbcType=VARCHAR},
+      addressbook_email = #{record.addressbookEmail,jdbcType=VARCHAR},
+      addressbook_companyname = #{record.addressbookCompanyname,jdbcType=VARCHAR},
+      addressbook_companyphone = #{record.addressbookCompanyphone,jdbcType=VARCHAR},
+      addressbook_companyaddress = #{record.addressbookCompanyaddress,jdbcType=VARCHAR},
+      addressbook_companyweb = #{record.addressbookCompanyweb,jdbcType=VARCHAR},
+      addressbook_memo = #{record.addressbookMemo,jdbcType=VARCHAR},
+      addressbook_enable = #{record.addressbookEnable,jdbcType=CHAR},
+      addressbook_job = #{record.addressbookJob,jdbcType=VARCHAR},
+      addressbook_staff = #{record.addressbookStaff.staffId,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.junchen.back.pojo.ErpAmAddressbook" >
+    update erp_am_addressbook
+    <set >
+      <if test="addressbookName != null" >
+        addressbook_name = #{addressbookName,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookGender != null" >
+        addressbook_gender = #{addressbookGender,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookQq != null" >
+        addressbook_qq = #{addressbookQq,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookTelephone != null" >
+        addressbook_telephone = #{addressbookTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookPhone != null" >
+        addressbook_phone = #{addressbookPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookWechat != null" >
+        addressbook_wechat = #{addressbookWechat,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookFax != null" >
+        addressbook_fax = #{addressbookFax,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookEmail != null" >
+        addressbook_email = #{addressbookEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookCompanyname != null" >
+        addressbook_companyname = #{addressbookCompanyname,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookCompanyphone != null" >
+        addressbook_companyphone = #{addressbookCompanyphone,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookCompanyaddress != null" >
+        addressbook_companyaddress = #{addressbookCompanyaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookCompanyweb != null" >
+        addressbook_companyweb = #{addressbookCompanyweb,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookMemo != null" >
+        addressbook_memo = #{addressbookMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookEnable != null" >
+        addressbook_enable = #{addressbookEnable,jdbcType=CHAR},
+      </if>
+      <if test="addressbookJob != null" >
+        addressbook_job = #{addressbookJob,jdbcType=VARCHAR},
+      </if>
+      <if test="addressbookStaff != null" >
+        addressbook_staff = #{addressbookStaff,jdbcType=BIGINT},
+      </if>
+    </set>
+    where addressbook_id = #{addressbookId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.junchen.back.pojo.ErpAmAddressbook" >
+    update erp_am_addressbook
+    set addressbook_name = #{addressbookName,jdbcType=VARCHAR},
+      addressbook_gender = #{addressbookGender,jdbcType=VARCHAR},
+      addressbook_qq = #{addressbookQq,jdbcType=VARCHAR},
+      addressbook_telephone = #{addressbookTelephone,jdbcType=VARCHAR},
+      addressbook_phone = #{addressbookPhone,jdbcType=VARCHAR},
+      addressbook_wechat = #{addressbookWechat,jdbcType=VARCHAR},
+      addressbook_fax = #{addressbookFax,jdbcType=VARCHAR},
+      addressbook_email = #{addressbookEmail,jdbcType=VARCHAR},
+      addressbook_companyname = #{addressbookCompanyname,jdbcType=VARCHAR},
+      addressbook_companyphone = #{addressbookCompanyphone,jdbcType=VARCHAR},
+      addressbook_companyaddress = #{addressbookCompanyaddress,jdbcType=VARCHAR},
+      addressbook_companyweb = #{addressbookCompanyweb,jdbcType=VARCHAR},
+      addressbook_memo = #{addressbookMemo,jdbcType=VARCHAR},
+      addressbook_enable = #{addressbookEnable,jdbcType=CHAR},
+      addressbook_job = #{addressbookJob,jdbcType=VARCHAR},
+      addressbook_staff = #{addressbookStaff.staffId,jdbcType=BIGINT}
+    where addressbook_id = #{addressbookId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="findCompany" resultType="java.lang.String">
+  	select distinct addressbook_companyname from erp_am_addressbook;
+  </select>
+  
+  
+</mapper>

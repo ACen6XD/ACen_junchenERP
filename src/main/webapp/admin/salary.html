@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>薪资管理</title>
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+
+	   <!-- 引入angularjs插件 -->
+	<script src="../plugins/angularjs/angular.min.js"></script>
+	
+	<!-- 引入分页插件 -->
+	<script src="../plugins/angularjs/pagination.js"></script>
+	<link rel="stylesheet" href="../plugins/angularjs/pagination.css">
+	<!-- 分页控件结束 -->
+	
+	<!-- 引入angularjs -->
+   	<script src="../js/base-pagination.js"></script>
+   	<script src="../js/controller/baseController.js"></script>
+ 	<script src="../js/service/fmSalaryService.js"></script>
+ 	<script src="../js/service/fmSalaryruleService.js"></script>
+ 	<script src="../js/service/amStaffService.js"></script>
+ 	<script src="../js/service/baseDictService.js"></script>
+ 	<script src="../js/service/loginService.js"></script>
+ 	<script src="../js/controller/fmSalaryController.js"></script>
+    
+</head>
+<body class="hold-transition skin-red sidebar-mini" ng-app="junchen" ng-controller='fmSalaryController' ng-init='findLoginStaff();findDict();findStaffList()'>
+  <!-- .box-body -->
+                    <div class="box-header with-border">
+                        <h3 class="box-title">薪资管理</h3>
+                    </div>
+
+                    <div class="box-body">
+
+                        <!-- 数据表格 -->
+                        <div class="table-box">
+
+                            <!--工具栏-->
+                            <div class="pull-left">
+                                <div class="form-group form-inline">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#editModal" ng-click='createNewOne()'><i class="fa fa-file-o"></i> 新建</button>
+                                        <button type="button" class="btn btn-default" title="删除" ng-click='dele()'><i class="fa fa-trash-o"></i> 删除</button>           
+                                        <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-tools pull-right">
+                                <div class="has-feedback">
+							                                         
+                                </div>
+                            </div>
+                            <!--工具栏/-->
+
+							<div class="box-tools pull-right">
+                                <div class="has-feedback">
+							    	薪资表名称：
+							    	<input type="text" ng-model="searchEntity.salaryName" style="width: 150px;margin-right: 10px">
+							       	制作人：
+							       	<select ng-model="searchEntity.salaryStaff.staffId" style="margin: 0px 8px 0px 0px">
+		      							<option value="">请选择</option>
+		      							<option ng-repeat="pojo in staffList" ng-value="pojo.salaryStaff.staffId" >{{pojo.salaryStaff.staffName}}</option>
+		      						</select>
+							       	<input type="button" value="查询" class="btn bg-olive btn-xs" ng-click="reloadList()" style="margin-right: 10px">                                  
+                                </div>
+                            </div>
+
+
+
+			                  <!--数据列表-->
+			                  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+			                      <thead>
+			                          <tr>
+			                              <th width="5%" class="text-center">
+			                                  <input id="selall" type="checkbox" class="icheckbox_square-blue" ng-model='master' ng-click='selectAllCheckBox(master,list)'>
+			                              </th> 
+										  <th class="text-center"  width="10%">薪资表编号</th>
+									      <th class="sorting"  width="25%">主题</th>									      
+									      <th class="text-center"  width="15%">制作人</th>
+									      <th class="text-center"  width="15%">制作时间</th>	
+									      <th class="text-center"  width="15%">状态</th>									     				
+					                      <th class="text-center"  width="15%">操作</th>
+			                          </tr>
+			                      </thead>
+			                      <tbody>
+			                          <tr ng-repeat='pojo in list'>
+			                              <td class="text-center"><input  type="checkbox" ng-checked='master' ng-click='updateSelect($event,pojo.salaryId)'></td>			                              
+				                          <td class="text-center">{{pojo.salaryId}}</td>
+									      <td><a data-toggle="modal" data-target="#editModal" ng-click='findOne(pojo.salaryId,2)'>{{pojo.salaryName}}</a></td>									     
+		                                  <td class="text-center">{{pojo.salaryStaff.staffName}}</td>	
+		                                  <td class="text-center"> {{pojo.salaryDate}}</td>	  
+		                                   <td class="text-center">
+												<div ng-if='pojo.salaryEnable == 1'>
+													待审核
+												</div>
+												<div ng-if='pojo.salaryEnable == 2'>
+													已完成
+												</div>
+											</td>                               
+		                                  <td class="text-center">                                           
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal" ng-if='pojo.salaryEnable != 2' ng-click='findOne(pojo.salaryId,0)' >修改</button>                                           
+		                                  	  <button type="button" class="btn bg-purple btn-xs" data-toggle="modal" data-target="#editModal" ng-if='pojo.salaryEnable != 2' ng-click="findOne(pojo.salaryId,1)" >审批</button>                                           
+		                                  </td>
+			                          </tr>
+									
+			                      </tbody>
+			                  </table>
+			                  <!--数据列表/-->                        
+							  
+							 
+                        </div>
+                        <!-- 数据表格 /-->
+                        
+                         <!-- 分页栏 --> 
+						<tm-pagination conf="paginationConf"></tm-pagination>
+                        
+                        
+                     </div>
+                    <!-- /.box-body -->
+         
+<!-- 编辑窗口 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin: -100px 10px 0px 100px">
+	<div class="modal-content" style="width: 1000px">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">薪资表编辑</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="1000px">
+		      	<tr>
+		      		<td><font color="red"><strong>*</strong></font>名称</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="名称" ng-model='entity.salary.salaryName'ng-trim='true'>  </td>
+		      	</tr>		      	
+		      	<tr>
+		 
+		      		<td colspan="4">
+		      		
+		      			
+                        <div class="has-feedback">
+						   	<strong>姓名</strong>：
+						   	<input type="text" ng-model="searchRules.rule.salaryruleStaffname" style="width: 100px;margin-right: 10px;margin-bottom: 10px">
+						      	<strong>部门</strong>：
+						      	<select ng-model="searchRules.rule.salaryruleStaffdep" style="margin: 0px 8px 0px 0px">
+													<option value="">请选择</option>
+													<option ng-repeat="pojo in depList" ng-value="pojo.dictItemName" >{{pojo.dictItemName}}</option>
+												</select>
+						      	<input type="button" value="查询" class="btn bg-olive btn-xs" ng-click="findSalaryRules()" style="margin-right: 10px">                                  
+                        </div>
+                        
+                         
+                        <div style="overflow-x: scroll; overflow-y: scroll;display: block;width: 950px;height: 300px">  
+						<table class=" table-bordered table-striped table-hover dataTable" width="1600px">
+	                    <thead>
+	                        <tr>
+						      <th class="text-center" width="5%" >姓名</th>
+						      <th class="text-center" width="5%">部门</th>
+						      <th class="text-center" >基本工资</th>																
+		                      <th class="text-center" >社保基数</th>	
+		                      <th class="text-center"> 养老保险</th>
+		                      <th class="text-center" >失业保险</th>
+		                      <th class="text-center" >医疗保险</th>
+		                      <th class="text-center" >工伤保险</th>
+		                      <th class="text-center" >生育保险</th>
+		                      <th class="text-center" >公积金</th>
+		                      <th class="text-center" >岗位津贴</th>
+		                      <th class="text-center" >交通住房补助</th>
+		                      <th class="text-center" >奖励性绩效</th>
+		                      <th class="text-center" >工龄补贴</th>
+		                      <th class="text-center" >其他补助</th>
+		                      <th class="text-center" width="100px" >工资总计</th>
+		       
+		                   </tr>
+	                    </thead>
+	                    <tbody>
+	                      <tr ng-repeat='pojo in entity.salaryRules'>
+	 							<td class="text-center">
+					            	{{pojo.salaryruleStaffname}}
+					            </td>
+					            <td class="text-center">
+					            	{{pojo.salaryruleStaffdep}}
+					            </td>
+								 <td >
+					            	<input type="number" class="form-control" ng-model="pojo.salaryruleBase" > 
+					            </td> 
+					             <td >
+					            	<input  type="number"  class="form-control" ng-model="pojo.salaryruleSocial" > 
+					            </td> 
+					             <td >
+					            	<input  type="number" class="form-control"  ng-model="pojo.salaryruleOld" value="0"> 
+					            </td>  <td >
+					            	<input type="number" class="form-control"  ng-model="pojo.salaryruleLose" value="0"> 
+					            </td>  <td >
+					            	<input  type="number"  class="form-control"  ng-model="pojo.salaryruleMedical" value="0"> 
+					            </td>  <td >
+					            	<input type="number" class="form-control"  ng-model="pojo.salaryruleInjure" value="0"> 
+					            </td>  <td >
+					            	<input type="number" class="form-control"  ng-model="pojo.salaryruleBaby" value="0"> 
+					            </td>  <td >
+					            	<input type="number" class="form-control"  ng-model="pojo.salaryruleFund" value="0"> 
+					            </td>  <td >
+					            	<input type="number" class="form-control"  ng-model="pojo.salaryruleJob" value="0"> 
+					            </td>  <td >
+					            	<input type="number" class="form-control"  ng-model="pojo.salaryruleLife" value="0"> 
+					            </td>  <td >
+					            	<input type="number" class="form-control"  ng-model="pojo.salaryruleReward" value="0">  
+					            </td>  <td >
+					            	<input type="number" class="form-control"  ng-model="pojo.salaryruleAge" value="0"> 
+					            </td>  <td >
+					            	<input type="number" class="form-control"  ng-model="pojo.salaryruleOther" value="0"> 
+					            </td>  
+					            <td class="text-center">
+					            <div>
+					           		<input class="form-control" type="number" ng-value='pojo.salaryruleBase-0 + pojo.salaryruleSocial-0 + pojo.salaryruleOld-0 + pojo.salaryruleLose-0
+					            	+ pojo.salaryruleMedical-0 + pojo.salaryruleInjure-0 + pojo.salaryruleBaby-0 + pojo.salaryruleFund-0 +pojo.salaryruleJob-0+
+					            	pojo.salaryruleLife-0 + pojo.salaryruleReward-0 +  pojo.salaryruleAge-0 + pojo.salaryruleOther-0' readonly="readonly">
+					            	
+					            </div>
+					     
+					            </td> 
+	                      </tr>
+	                    </tbody>
+			  		</table> 
+			  		</div>  
+					</td>
+		      	</tr>
+		      	
+		      	
+		      	<tr>
+		      		<td>备注</td>
+		      		<td colspan="3"><textarea rows="3" cols="70" ng-model='entity.salary.salaryMemo'></textarea>  </td>
+		      		
+		      	</tr>	
+		      	
+		      	<tr>
+		      		<td>制作人</td>
+		      		<td><input  class="form-control" ng-model='entity.salary.salaryStaff.staffName' readonly="readonly">  </td>
+		      		<td width="100px">制作日期</td>
+		      		<td><input  class="form-control" ng-model='entity.salary.salaryDate' readonly="readonly">  </td>
+		      	</tr>	
+		      	
+		      
+			      	<tr ng-if='showFlag >= 1'>
+			      		<td>审批人</td>
+			      		<td><input  class="form-control" ng-model='entity.salary.salaryBoss.staffName' readonly="readonly">  </td>
+			      		<td width="100px">审批日期</td>
+			      		<td><input  class="form-control" ng-model='entity.salary.salaryBossdate' readonly="readonly">  </td>
+			      	</tr>
+			      	<tr ng-if='showFlag >= 1'>
+			      		<td >审批小结</td>
+			      		<td colspan="3"><input  class="form-control" ng-model='entity.salary.salaryBossmemo' >  </td>
+			      	</tr> 
+		      	
+			 </table>				
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click='save()' ng-if='showFlag != 2'>保存</button>
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+   
+</body>
+</html>

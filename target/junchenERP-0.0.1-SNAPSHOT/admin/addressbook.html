@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>通讯录管理</title>
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- 引入angularjs插件 -->
+	<script src="../plugins/angularjs/angular.min.js"></script>
+	
+	<!-- 引入分页插件 -->
+	<script src="../plugins/angularjs/pagination.js"></script>
+	<link rel="stylesheet" href="../plugins/angularjs/pagination.css">
+	<!-- 分页控件结束 -->
+	
+	<!-- 引入angularjs -->
+   	<script src="../js/base-pagination.js"></script>
+   	<script src="../js/controller/baseController.js"></script>
+ 	<script src="../js/service/amAddressbookService.js"></script>
+ 	<script src="../js/service/loginService.js"></script>
+ 	<script src="../js/controller/amAddressbookController.js"></script>
+    
+</head>
+<body class="hold-transition skin-red sidebar-mini" ng-app="junchen" ng-controller="amAddressbookController" ng-init="findCompany()">
+  <!-- .box-body -->
+                    <div class="box-header with-border">
+                        <h3 class="box-title">通讯录管理</h3>
+                    </div>
+
+                    <div class="box-body">
+
+                        <!-- 数据表格 -->
+                        <div class="table-box">
+
+                            <!--工具栏-->
+                            <div class="pull-left">
+                                <div class="form-group form-inline">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#editModal" ng-click="createNewOne()"><i class="fa fa-file-o"></i> 新建</button>
+                                        <button type="button" class="btn btn-default" title="删除" ng-click="dele()"><i class="fa fa-trash-o"></i> 删除</button>           
+                                        <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-tools pull-right">
+                                 <div class="has-feedback" >
+							       	姓名：<input ng-model="searchEntity.addressbookName" type="text" style="margin: 0px 8px 0px 0px">
+							       	性别：
+							       	<select ng-model="searchEntity.addressbookGender" style="margin: 0px 8px 0px 0px">
+							       		<option value="">--请选择--</option>
+							       		<option value="男">男</option>
+							       		<option value="女">女</option>
+							       	</select>
+							       	公司：
+							       	<select ng-model="searchEntity.addressbookCompanyname" style="margin: 0px 8px 0px 0px">
+							       		<option value="">--请选择--</option>
+							       		<option ng-repeat="pojo in companyList" value="{{pojo}}">{{pojo}}</option>
+							       	</select>
+							       	<input type="button" value="查询" class="btn bg-olive btn-xs" ng-click="reloadList()">                          
+                                	
+                                </div>
+                            </div>
+                            <!--工具栏/-->
+
+			                  <!--数据列表-->
+			                  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+			                      <thead>
+			                          <tr>
+			                              <th class="text-center" width="5%">
+			                                  <input id="selall" type="checkbox" class="icheckbox_square-blue" ng-model="master" ng-click="selectAllCheckBox(master,list)">
+			                              </th> 
+										  <th class="text-center" width="10%">姓名</th>
+									      <th class="text-center" width="5%">性别</th>									      
+									      <th class="text-center" width="17%">手机</th>	
+									      <th class="text-center" width="18%">微信</th>		
+									      <th class="text-center" width="20%">公司</th>
+									      <th class="text-center" width="10%">职务</th>							     				
+					                      <th class="text-center" width="15%">操作</th>
+			                          </tr>
+			                      </thead>
+			                      <tbody>
+			                          <tr ng-repeat="pojo in list">
+			                              <td class="text-center"><input  type="checkbox" ng-click="updateSelect($event,pojo.addressbookId)" ng-checked="master"></td>			                              
+				                          <td class="text-center">{{pojo.addressbookName}}</td>
+									      <td class="text-center">{{pojo.addressbookGender}}</td>									     
+		                                  <td class="text-center">{{pojo.addressbookTelephone}}</td>
+		                                  <td class="text-center">{{pojo.addressbookWechat}}</td>
+		                                  <td class="text-center">{{pojo.addressbookCompanyname}}</td>		
+		                                  <td class="text-center">{{pojo.addressbookJob}}</td>				                                 
+		                                  <td class="text-center">                                           
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#checkModal"  ng-click="findOne(pojo.addressbookId)">查看详情</button>
+		                                 	  &nbsp;
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal" ng-click="findOne(pojo.addressbookId)">修改</button>  
+		                                 	                                          
+		                                  </td>
+			                          </tr>
+								
+			                      </tbody>
+			                  </table>
+			                  <!--数据列表/-->                        
+							  
+							   <!--数据列表/-->                        
+							 
+							  <!-- 分页栏 --> 
+							 <tm-pagination conf="paginationConf"></tm-pagination>
+							 
+                        </div>
+                        <!-- 数据表格 /-->
+                        
+                        
+                        
+                        
+                     </div>
+                    <!-- /.box-body -->
+         
+<!-- 编辑窗口 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" >
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">通讯录编辑</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="800px">
+		      	 <tr >
+                        <th colspan="4" ><font size="3">基本信息</font></th>
+                </tr>
+		      	<tr>
+		      		<td >姓名<font color="red">*</font></td>
+		      		<td><input  class="form-control" placeholder="通讯录联系人姓名" ng-model="entity.addressbookName">  </td>
+		      		<td>性别<font color="red">*</font></td>
+		      		<td>
+		      			<input type="radio" name="addressbookGender" ng-model="entity.addressbookGender" value="男" ng-checked="entity.addressbookGender == '男'" style="display: inline;">男
+		      				&nbsp;&nbsp;&nbsp;&nbsp;
+		      			<input type="radio" name="addressbookGender" ng-model="entity.addressbookGender"  value="女" ng-checked="entity.addressbookGender == '女'" style="display: inline;">女
+		      		</td>
+		      	</tr>	
+		      	<tr>
+		      		<td>手机</td>
+		      		<td><input  class="form-control" placeholder="手机号码" ng-model="entity.addressbookTelephone">  </td>
+		      		<td>电话</td>
+		      		<td>
+		      			<input  class="form-control" placeholder="电话号码" ng-model="entity.addressbookPhone">
+		      		</td>
+
+		      	</tr>
+		      	<tr>
+		      		<td>微信</td>
+		      		<td><input  class="form-control" placeholder="微信号" ng-model="entity.addressbookWechat">  </td>
+		      		<td>QQ</td>
+		      		<td><input  class="form-control" placeholder="QQ" ng-model="entity.addressbookQq"></td>
+		      	</tr>
+		      	
+		      	<tr>
+		      		<td>邮箱</td>
+		      		<td><input  class="form-control" placeholder="邮箱" ng-model="entity.addressbookEmail">  </td>
+		      		<td>传真</td>
+		      		<td><input  class="form-control" placeholder="传真" ng-model="entity.addressbookFax"></td>
+		      	</tr>	
+				
+				<tr>
+		      		<td>职务</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="职务" ng-model="entity.addressbookJob">  </td>
+		      	</tr>	
+		      	
+		      	<tr >
+                        <th colspan="4" ><font size="3">公司信息</font></th>
+                </tr>			      	
+		      	<tr>
+		      		<td>公司名称</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="名称" ng-model="entity.addressbookCompanyname">  </td>
+		      	</tr>	
+		      	<tr>
+		      		<td>公司电话</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="电话" ng-model="entity.addressbookCompanyphone">  </td>
+		      	</tr>
+		      	<tr>
+		      		<td>公司地址</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="网址" ng-model="entity.addressbookCompanyaddress">  </td>
+		      	</tr>	
+		      	<tr>
+		      		<td>公司网址</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="地址" ng-model="entity.addressbookCompanyweb">  </td>
+		      	</tr>	
+		      	
+		      	<tr >
+                      <th colspan="4" ><font size="3">其他信息</font></th>
+                </tr>
+		      	<tr>
+		      		<td>备注</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="备注" ng-model="entity.addressbookMemo">  </td>
+		      	</tr>	      	
+			 </table>				
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="save()">保存</button>
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+   
+   <!-- 查看窗口 -->
+<div class="modal fade" id="checkModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" >
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">通讯录查看</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="800px">
+		      	 <tr >
+                        <th colspan="4" ><font size="3">基本信息</font></th>
+                </tr>
+		      	<tr>
+		      		<td >姓名</td>
+		      		<td><input  class="form-control" placeholder="通讯录联系人姓名" ng-model="entity.addressbookName" readonly="readonly">  </td>
+		      		<td>性别</td>
+		      		<td>
+		      			<input  class="form-control"  ng-model="entity.addressbookGender" readonly="readonly">
+		      		</td>
+		      	</tr>	
+		      	<tr>
+		      		<td>手机</td>
+		      		<td><input  class="form-control" placeholder="手机号码" ng-model="entity.addressbookTelephone" readonly="readonly">  </td>
+		      		<td>电话</td>
+		      		<td>
+		      			<input  class="form-control" placeholder="电话号码" ng-model="entity.addressbookPhone" readonly="readonly">
+		      		</td>
+
+		      	</tr>
+		      	<tr>
+		      		<td>微信</td>
+		      		<td><input  class="form-control" placeholder="微信号" ng-model="entity.addressbookWechat" readonly="readonly">  </td>
+		      		<td>QQ</td>
+		      		<td><input  class="form-control" placeholder="QQ" ng-model="entity.addressbookQq" readonly="readonly"></td>
+		      	</tr>
+		      	
+		      	<tr>
+		      		<td>邮箱</td>
+		      		<td><input  class="form-control" placeholder="邮箱" ng-model="entity.addressbookEmail" readonly="readonly">  </td>
+		      		<td>传真</td>
+		      		<td><input  class="form-control" placeholder="传真" ng-model="entity.addressbookFax" readonly="readonly"></td>
+		      	</tr>	
+				
+				<tr>
+		      		<td>职务</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="职务" ng-model="entity.addressbookJob" readonly="readonly">  </td>
+		      	</tr>	
+		      	
+		      	<tr >
+                        <th colspan="4" ><font size="3">公司信息</font></th>
+                </tr>			      	
+		      	<tr>
+		      		<td>公司名称</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="名称" ng-model="entity.addressbookCompanyname" readonly="readonly">  </td>
+		      	</tr>	
+		      	<tr>
+		      		<td>公司电话</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="电话" ng-model="entity.addressbookCompanyphone" readonly="readonly">  </td>
+		      	</tr>
+		      	<tr>
+		      		<td>公司地址</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="网址" ng-model="entity.addressbookCompanyaddress" readonly="readonly">  </td>
+		      	</tr>	
+		      	<tr>
+		      		<td>公司网址</td>
+		      		<td colspan="3"><a ng-href="https://{{entity.addressbookCompanyweb}}" target="_blank"><input  class="form-control" placeholder="地址" ng-model="entity.addressbookCompanyweb" readonly="readonly"></a>  </td>
+		      	</tr>	
+		      	
+		      	<tr >
+                      <th colspan="4" ><font size="3">其他信息</font></th>
+                </tr>
+		      	<tr>
+		      		<td>备注</td>
+		      		<td colspan="3"><input  class="form-control" placeholder="备注" ng-model="entity.addressbookMemo" readonly="readonly">  </td>
+		      	</tr>	      	
+			 </table>				
+		</div>
+		<div class="modal-footer">						
+			
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+   
+   
+   
+   
+   
+</body>
+</html>

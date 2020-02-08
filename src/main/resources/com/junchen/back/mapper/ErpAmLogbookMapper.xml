@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.junchen.back.mapper.ErpAmLogbookMapper" >
+  <resultMap id="BaseResultMap" type="com.junchen.back.pojo.ErpAmLogbook" >
+    <id column="logbook_id" property="logbookId" jdbcType="BIGINT" />
+    <result column="logbook_title" property="logbookTitle" jdbcType="VARCHAR" />
+    <result column="logbook_content" property="logbookContent" jdbcType="VARCHAR" />
+    <result column="logbook_study" property="logbookStudy" jdbcType="VARCHAR" />
+    <result column="logbook_summary" property="logbookSummary" jdbcType="VARCHAR" />
+    <result column="logbook_date" property="logbookDate" jdbcType="VARCHAR" />
+    <result column="logbook_approvermsg" property="logbookApprovermsg" jdbcType="VARCHAR" />
+    <result column="logbook_approverdate" property="logbookApproverdate" jdbcType="VARCHAR" />
+    <result column="logbook_enable" property="logbookEnable" jdbcType="CHAR" />
+    <association property="logbookStaff" column="logbook_staff"  select="com.junchen.back.mapper.ErpAmRulesMapper.ruleStaffSelect"/>
+    <association property="logbookApprover" column="logbook_approver"  select="com.junchen.back.mapper.ErpAmRulesMapper.ruleStaffSelect"/>
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <!-- <where > -->
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    <!-- </where> -->
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    logbook_id, logbook_title, logbook_content, logbook_study, logbook_summary, logbook_date, 
+    logbook_staff, logbook_approver, logbook_approvermsg, logbook_approverdate, logbook_enable
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.junchen.back.pojo.ErpAmLogbookExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from erp_am_logbook
+    <where>
+	    <if test="_parameter != null" >
+	      <include refid="Example_Where_Clause" />
+	    </if>
+	    and logbook_enable != '0'
+    </where>    
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from erp_am_logbook
+    where logbook_id = #{logbookId,jdbcType=BIGINT}
+  </select>
+ <!--  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from erp_am_logbook
+    where logbook_id = #{logbookId,jdbcType=BIGINT}
+  </delete> -->
+  
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+  	update erp_am_logbook set logbook_enable='0' where logbook_id = #{id};
+  </update>
+  
+  <delete id="deleteByExample" parameterType="com.junchen.back.pojo.ErpAmLogbookExample" >
+    delete from erp_am_logbook
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.junchen.back.pojo.ErpAmLogbook" >
+    insert into erp_am_logbook (logbook_id, logbook_title, logbook_content, 
+      logbook_study, logbook_summary, logbook_date, 
+      logbook_staff, logbook_approver, logbook_approvermsg, 
+      logbook_approverdate, logbook_enable)
+    values (#{logbookId,jdbcType=BIGINT}, #{logbookTitle,jdbcType=VARCHAR}, #{logbookContent,jdbcType=VARCHAR}, 
+      #{logbookStudy,jdbcType=VARCHAR}, #{logbookSummary,jdbcType=VARCHAR}, #{logbookDate,jdbcType=VARCHAR}, 
+      #{logbookStaff.staffId,jdbcType=BIGINT}, #{logbookApprover.staffId,jdbcType=BIGINT}, #{logbookApprovermsg,jdbcType=VARCHAR}, 
+      #{logbookApproverdate,jdbcType=VARCHAR}, #{logbookEnable,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.junchen.back.pojo.ErpAmLogbook" >
+    insert into erp_am_logbook
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="logbookId != null" >
+        logbook_id,
+      </if>
+      <if test="logbookTitle != null" >
+        logbook_title,
+      </if>
+      <if test="logbookContent != null" >
+        logbook_content,
+      </if>
+      <if test="logbookStudy != null" >
+        logbook_study,
+      </if>
+      <if test="logbookSummary != null" >
+        logbook_summary,
+      </if>
+      <if test="logbookDate != null" >
+        logbook_date,
+      </if>
+      <if test="logbookStaff != null" >
+        logbook_staff,
+      </if>
+      <if test="logbookApprover != null" >
+        logbook_approver,
+      </if>
+      <if test="logbookApprovermsg != null" >
+        logbook_approvermsg,
+      </if>
+      <if test="logbookApproverdate != null" >
+        logbook_approverdate,
+      </if>
+      <if test="logbookEnable != null" >
+        logbook_enable,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="logbookId != null" >
+        #{logbookId,jdbcType=BIGINT},
+      </if>
+      <if test="logbookTitle != null" >
+        #{logbookTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookContent != null" >
+        #{logbookContent,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookStudy != null" >
+        #{logbookStudy,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookSummary != null" >
+        #{logbookSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookDate != null" >
+        #{logbookDate,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookStaff != null" >
+        #{logbookStaff.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="logbookApprover != null" >
+        #{logbookApprover.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="logbookApprovermsg != null" >
+        #{logbookApprovermsg,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookApproverdate != null" >
+        #{logbookApproverdate,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookEnable != null" >
+        #{logbookEnable,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.junchen.back.pojo.ErpAmLogbookExample" resultType="java.lang.Integer" >
+    select count(*) from erp_am_logbook
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update erp_am_logbook
+    <set >
+      <if test="record.logbookId != null" >
+        logbook_id = #{record.logbookId,jdbcType=BIGINT},
+      </if>
+      <if test="record.logbookTitle != null" >
+        logbook_title = #{record.logbookTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logbookContent != null" >
+        logbook_content = #{record.logbookContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logbookStudy != null" >
+        logbook_study = #{record.logbookStudy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logbookSummary != null" >
+        logbook_summary = #{record.logbookSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logbookDate != null" >
+        logbook_date = #{record.logbookDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logbookStaff != null" >
+        logbook_staff = #{record.logbookStaff.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="record.logbookApprover != null" >
+        logbook_approver = #{record.logbookApprover.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="record.logbookApprovermsg != null" >
+        logbook_approvermsg = #{record.logbookApprovermsg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logbookApproverdate != null" >
+        logbook_approverdate = #{record.logbookApproverdate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logbookEnable != null" >
+        logbook_enable = #{record.logbookEnable,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update erp_am_logbook
+    set logbook_id = #{record.logbookId,jdbcType=BIGINT},
+      logbook_title = #{record.logbookTitle,jdbcType=VARCHAR},
+      logbook_content = #{record.logbookContent,jdbcType=VARCHAR},
+      logbook_study = #{record.logbookStudy,jdbcType=VARCHAR},
+      logbook_summary = #{record.logbookSummary,jdbcType=VARCHAR},
+      logbook_date = #{record.logbookDate,jdbcType=VARCHAR},
+      logbook_staff = #{record.logbookStaff.staffId,jdbcType=BIGINT},
+      logbook_approver = #{record.logbookApprover.staffId,jdbcType=BIGINT},
+      logbook_approvermsg = #{record.logbookApprovermsg,jdbcType=VARCHAR},
+      logbook_approverdate = #{record.logbookApproverdate,jdbcType=VARCHAR},
+      logbook_enable = #{record.logbookEnable,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.junchen.back.pojo.ErpAmLogbook" >
+    update erp_am_logbook
+    <set >
+      <if test="logbookTitle != null" >
+        logbook_title = #{logbookTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookContent != null" >
+        logbook_content = #{logbookContent,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookStudy != null" >
+        logbook_study = #{logbookStudy,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookSummary != null" >
+        logbook_summary = #{logbookSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookDate != null" >
+        logbook_date = #{logbookDate,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookStaff != null" >
+        logbook_staff = #{logbookStaff.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="logbookApprover != null" >
+        logbook_approver = #{logbookApprover.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="logbookApprovermsg != null" >
+        logbook_approvermsg = #{logbookApprovermsg,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookApproverdate != null" >
+        logbook_approverdate = #{logbookApproverdate,jdbcType=VARCHAR},
+      </if>
+      <if test="logbookEnable != null" >
+        logbook_enable = #{logbookEnable,jdbcType=CHAR},
+      </if>
+    </set>
+    where logbook_id = #{logbookId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.junchen.back.pojo.ErpAmLogbook" >
+    update erp_am_logbook
+    set logbook_title = #{logbookTitle,jdbcType=VARCHAR},
+      logbook_content = #{logbookContent,jdbcType=VARCHAR},
+      logbook_study = #{logbookStudy,jdbcType=VARCHAR},
+      logbook_summary = #{logbookSummary,jdbcType=VARCHAR},
+      logbook_date = #{logbookDate,jdbcType=VARCHAR},
+      logbook_staff = #{logbookStaff.staffId,jdbcType=BIGINT},
+      logbook_approver = #{logbookApprover.staffId,jdbcType=BIGINT},
+      logbook_approvermsg = #{logbookApprovermsg,jdbcType=VARCHAR},
+      logbook_approverdate = #{logbookApproverdate,jdbcType=VARCHAR},
+      logbook_enable = #{logbookEnable,jdbcType=CHAR}
+    where logbook_id = #{logbookId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="findStaffList" resultMap="BaseResultMap">
+  	select distinct logbook_staff from erp_am_logbook;
+  </select>
+  
+  
+</mapper>

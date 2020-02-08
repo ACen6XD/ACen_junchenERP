@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>工作日志管理</title>
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+	
+	 <!-- 引入angularjs插件 -->
+	<script src="../plugins/angularjs/angular.min.js"></script>
+	
+	<!-- 引入分页插件 -->
+	<script src="../plugins/angularjs/pagination.js"></script>
+	<link rel="stylesheet" href="../plugins/angularjs/pagination.css">
+	<!-- 分页控件结束 -->
+	
+	<!-- 引入angularjs -->
+   	<script src="../js/base-pagination.js"></script>
+   	<script src="../js/controller/baseController.js"></script>
+ 	<script src="../js/service/amLogbookService.js"></script>
+ 	<script src="../js/service/loginService.js"></script>
+ 	<script src="../js/controller/amLogbookController.js"></script>
+    
+    <!-- 富文本编辑器 -->
+	<link rel="stylesheet" href="../plugins/kindeditor/themes/default/default.css" />
+	<script charset="utf-8" src="../plugins/kindeditor/kindeditor-min.js"></script>
+	<script charset="utf-8" src="../plugins/kindeditor/lang/zh_CN.js"></script>
+    <script type="text/javascript">
+		var editor;
+		KindEditor.ready(function(K) {
+			editor = K.create('textarea[name="logbookContent"]', {
+				allowFileManager : true
+			});
+		});
+	</script>
+</head>
+<body class="hold-transition skin-red sidebar-mini" ng-app="junchen" ng-controller="amLogbookController" ng-init="findStaffList();findLoginStaff()">
+  <!-- .box-body -->
+                    <div class="box-header with-border">
+                        <h3 class="box-title">工作日志管理</h3>
+                    </div>
+
+                    <div class="box-body">
+
+                        <!-- 数据表格 -->
+                        <div class="table-box">
+
+                            <!--工具栏-->
+                            <div class="pull-left">
+                                <div class="form-group form-inline">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#editModal" ng-click="creatNewOne()"><i class="fa fa-file-o"></i> 新建</button>
+                                        <button type="button" class="btn btn-default" title="删除" ng-click="dele()"><i class="fa fa-trash-o"></i> 删除</button>           
+                                        <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-tools pull-right">
+                                <div class="has-feedback">
+							    	姓名：
+							    	<select ng-model="searchEntity.logbookStaff.staffId" style="margin: 0px 8px 0px 0px">
+							       		<option value="">--请选择--</option>
+							       		<option ng-repeat="pojo in staffList" ng-value="pojo.logbookStaff.staffId">{{pojo.logbookStaff.staffName}}</option>
+							       	</select>
+							       	状态：
+							       	<select ng-model="searchEntity.logbookEnable" style="margin: 0px 8px 0px 0px">
+							       		<option value="">--请选择--</option>
+							       		<option ng-value="2">已审核</option>
+							       		<option ng-value="1">未审核</option>
+							       	</select>
+							       	日期：
+							       	<input type="date" ng-model="searchEntity.logbookDate">
+							       	<input type="button" value="查询" class="btn bg-olive btn-xs" ng-click="reloadList()">                                  
+                                </div>
+                            </div>
+                            <!--工具栏/-->
+
+			                  <!--数据列表-->
+			                  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+			                      <thead>
+			                          <tr>
+			                              <th class="text-center"  width="5%">
+			                                  <input id="selall" type="checkbox" class="icheckbox_square-blue" ng-model="master" ng-click="selectAllCheckBox(master,list)">
+			                              </th> 
+										  <th class="sorting_asc" width="15%">员工姓名</th>
+									      <th class="sorting" width="25%">标题</th>									      
+									      <th class="text-center" width="25%">工作日期</th>	
+									      <th class="text-center" width="20%">状态</th>								     				
+					                      <th class="text-center" width="10%">操作</th>
+			                          </tr>
+			                      </thead>
+			                      <tbody>
+			                          <tr ng-repeat="pojo in list">
+			                              <td class="text-center"><input  type="checkbox" ng-click="updateSelect($event,pojo.logbookId)" ng-checked="master"></td>			                              
+				                          <td>{{pojo.logbookStaff.staffName}}</td>
+									      <td><a data-toggle="modal" data-target="#checkModal" ng-click="findCheckOne(pojo.logbookId)">{{pojo.logbookTitle}}</a></td>									     
+		                                  <td class="text-center">{{pojo.logbookDate}}</td>	
+		                                  <td class="text-center">
+		                                  	<div ng-if="pojo.logbookEnable == 1">
+		                                  		未审核
+		                                  	</div>
+		                                  	<div ng-if="pojo.logbookEnable == 2">
+		                                  		已审核
+		                                  	</div>
+		                                  </td>		                                 
+		                                  <td class="text-center">                                           
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal"  ng-click="findOne(pojo.logbookId)" ng-if="pojo.logbookStaff.staffId == loginStaff.staffId && pojo.logbookEnable!='2' ">修改</button>                                           
+		                                  
+		                                  	  <button type="button" class="btn bg-purple btn-xs" data-toggle="modal" data-target="#approverModal"  ng-click="findApproverOne(pojo.logbookId)" ng-if="pojo.logbookEnable!='2'">审批</button>  
+		                                  </td>
+			                          </tr>
+									 
+			                      </tbody>
+			                  </table>
+			                  <!--数据列表/-->                        
+					                      
+							  {{selectIds}}
+							  <!-- 分页栏 --> 
+							 <tm-pagination conf="paginationConf"></tm-pagination>
+							 
+                        </div>
+                        <!-- 数据表格 /-->
+                        
+                        
+                        
+                        
+                     </div>
+                    <!-- /.box-body -->
+         
+<!-- 编辑窗口 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin: -100px 10px 0px 170px">
+	<div class="modal-content" style="width: 840px;margin: 0px auto;">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">工作日志编辑</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="1000px">
+		      	<tr>
+		      		<td width="10%">标题</td>
+		      		<td><input  class="form-control" placeholder="标题" ng-model="entity.logbookTitle">  </td>
+		      		<td>日期</td>
+		      		<td>
+		      			 <input type="date" ng-model="entity.logbookDate">
+		      		</td>
+		      	</tr>		      	
+		      	<tr>
+		      		<td>工作内容</td>
+		      		<td colspan="3">
+		      			 <textarea name="logbookContent" style="width:700px;height:400px;visibility:hidden;" ></textarea>
+		      		</td>
+		      	</tr>	
+		      	<tr>
+		      		<td>今日学习</td>
+		      		<td colspan="3">
+		      			<textarea rows="8" cols="97" placeholder="今日学习"  ng-model="entity.logbookStudy"></textarea>
+		      		</td>
+		      	</tr>	
+		      	<tr>
+		      		<td>工作总结</td>
+		      		<td colspan="3">
+		      			<textarea rows="8" cols="97" placeholder="工作总结"  ng-model="entity.logbookSummary"></textarea>
+		      		 </td>
+		      	</tr>		      	
+			 </table>				
+		</div>
+		<div class="modal-footer">	
+							
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="save()">保存</button>
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+   
+   
+  <!-- 查看窗口 -->
+<div class="modal fade" id="checkModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin: -100px 10px 0px 170px">
+	<div class="modal-content" style="width: 840px;margin: 0px auto;">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">工作日志查看</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="1000px">
+		      <thead>
+                  <tr >
+                     <th colspan="4" ><font size="4">日志信息</font></th>
+                  </tr>
+              </thead>
+		      	<tr>
+		      		<td width="10%">标题</td>
+		      		<td><input  class="form-control" placeholder="标题" ng-model="entity.logbookTitle" readonly="readonly">  </td>
+		      		<td>日期</td>
+		      		<td>
+		      			 <input type="date" ng-model="entity.logbookDate" readonly="readonly">
+		      		</td>
+		      	</tr>		      	
+		      	<tr>
+		      		<td>工作内容</td>
+		      		<td colspan="3">
+		      			<div data-ng-bind-html="contentBody" style=" overflow:scroll; width:700px; height:300px;"></div>
+		      			
+		      		</td>
+		      	</tr>	
+		      	<tr>
+		      		<td>今日学习</td>
+		      		<td colspan="3">
+		      			<textarea rows="8" cols="97" placeholder="今日学习"  ng-model="entity.logbookStudy" readonly="readonly"></textarea>
+		      		</td>
+		      	</tr>	
+		      	<tr>
+		      		<td>工作总结</td>
+		      		<td colspan="3">
+		      			<textarea rows="8" cols="97" placeholder="工作总结"  ng-model="entity.logbookSummary" readonly="readonly"></textarea>
+		      		 </td>
+		      	</tr>	
+		      	
+		      	<thead>
+                  <tr >
+                     <th colspan="4" ><font size="4">审批信息</font></th>
+                  </tr>
+              </thead>
+		      		 
+		     <tr>
+		      		<td width="10%">审批人</td>
+		      		<td><input  class="form-control" placeholder="审批人" ng-model="entity.logbookApprover.staffName" readonly="readonly">  </td>
+		      		<td>审批日期</td>
+		      		<td>
+		      			 <input class="form-control" ng-model="entity.logbookApproverdate" readonly="readonly">
+		      		</td>
+		     </tr>		
+		     <tr>
+		      		<td>审批小结</td>
+		      		<td colspan="3">
+		      			<textarea rows="6" cols="97" placeholder="审批小结"  ng-model="entity.logbookApprovermsg" readonly="readonly"></textarea>
+		      		 </td>
+		     </tr>	
+		      	   	
+			 </table>				
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+	
+	<!-- 审批窗口 -->
+<div class="modal fade" id="approverModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin: -100px 10px 0px 170px">
+	<div class="modal-content" style="width: 840px;margin: 0px auto;">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">工作日志审批</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="1000px">
+		      <thead>
+                  <tr >
+                     <th colspan="4" ><font size="4">日志信息</font></th>
+                  </tr>
+              </thead>
+		      	<tr>
+		      		<td width="10%">标题</td>
+		      		<td><input  class="form-control" placeholder="标题" ng-model="entity.logbookTitle" readonly="readonly">  </td>
+		      		<td>日期</td>
+		      		<td>
+		      			 <input type="date" ng-model="entity.logbookDate" readonly="readonly">
+		      		</td>
+		      	</tr>		      	
+				<tr>		      	
+		      		<td>员工姓名</td>
+		      		<td>
+		      			 <input  class="form-control"  ng-model="entity.logbookStaff.staffName" readonly="readonly">
+		      		</td>
+		      	</tr>
+		      	<thead>
+                  <tr >
+                     <th colspan="4" ><font size="4">审批信息</font></th>
+                  </tr>
+              </thead>
+		      		 
+		      <tr>
+		      		<td width="10%">审批人</td>
+		      		<td><input  class="form-control" placeholder="审批人" ng-model="entity.logbookApprover.staffName" readonly="readonly">  </td>
+		      		<td>审批日期</td>
+		      		<td>
+		      			 <input class="form-control" ng-model="entity.logbookApproverdate" readonly="readonly">
+		      		</td>
+		     </tr>		
+		     <tr>
+		      		<td>审批小结</td>
+		      		<td colspan="3">
+		      			<textarea rows="6" cols="97" placeholder="审批小结"  ng-model="entity.logbookApprovermsg" ></textarea>
+		      		 </td>
+		     </tr>	
+		      	   	
+			 </table>				
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="approver()">审批</button>
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+			
+		</div>
+	  </div>
+	</div>
+	
+	
+</div>
+   
+   
+   
+   
+   
+   
+</body>
+</html>

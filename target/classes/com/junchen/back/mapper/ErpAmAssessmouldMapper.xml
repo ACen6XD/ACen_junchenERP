@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.junchen.back.mapper.ErpAmAssessmouldMapper">
+  <resultMap id="BaseResultMap" type="com.junchen.back.pojo.ErpAmAssessmould">
+    <id column="assessmould_id" jdbcType="BIGINT" property="assessmouldId" />
+    <result column="assessmould_name" jdbcType="VARCHAR" property="assessmouldName" />
+    <result column="assessmould_makeDate" jdbcType="VARCHAR" property="assessmouldMakedate" />
+    <result column="assessmould_enable" jdbcType="CHAR" property="assessmouldEnable" />
+    <result column="assessmould_memo" jdbcType="VARCHAR" property="assessmouldMemo" />
+    <result column="assessmould_total" jdbcType="BIGINT" property="assessmouldTotal" />
+    <association property="assessmouldType" column="assessmould_type"  select="com.junchen.back.mapper.ErpAmStaffMapper.TypeSelect"/>
+	<association property="assessmouldStaff" column="assessmould_staff"  select="com.junchen.back.mapper.ErpAmRulesMapper.ruleStaffSelect"/>
+  </resultMap>
+
+
+
+  <sql id="Example_Where_Clause">
+    <!-- <where> -->
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    <!-- </where> -->
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    assessmould_id, assessmould_name, assessmould_staff, assessmould_makeDate, assessmould_enable, 
+    assessmould_memo, assessmould_total, assessmould_type
+  </sql>
+  
+  <select id="selectByExample" parameterType="com.junchen.back.pojo.ErpAmAssessmouldExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from erp_am_assessmould
+    <where>
+	    <if test="_parameter != null">
+	      <include refid="Example_Where_Clause" />
+	    </if>
+	    and    assessmould_enable = '1' 
+    </where>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from erp_am_assessmould
+    where assessmould_id = #{assessmouldId,jdbcType=BIGINT}
+  </select>
+ 
+<!--   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from erp_am_assessmould
+    where assessmould_id = #{assessmouldId,jdbcType=BIGINT}
+  </delete> -->
+  
+   <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update erp_am_assessmould
+    set assessmould_enable = '0'
+    where assessmould_id = #{assessmouldId,jdbcType=BIGINT}
+  </update>
+  
+  <delete id="deleteByExample" parameterType="com.junchen.back.pojo.ErpAmAssessmouldExample">
+    delete from erp_am_assessmould
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.junchen.back.pojo.ErpAmAssessmould">
+	  <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="assessmouldId">
+	  	select LAST_INSERT_ID() as assessmouldId
+	  </selectKey>
+    insert into erp_am_assessmould (assessmould_id, assessmould_name, assessmould_staff, 
+      assessmould_makeDate, assessmould_enable, assessmould_memo, 
+      assessmould_total, assessmould_type)
+    values (#{assessmouldId,jdbcType=BIGINT}, #{assessmouldName,jdbcType=VARCHAR}, #{assessmouldStaff.staffId,jdbcType=BIGINT}, 
+      #{assessmouldMakedate,jdbcType=VARCHAR}, #{assessmouldEnable,jdbcType=CHAR}, #{assessmouldMemo,jdbcType=VARCHAR}, 
+      #{assessmouldTotal,jdbcType=BIGINT}, #{assessmouldType.dictId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.junchen.back.pojo.ErpAmAssessmould">
+    insert into erp_am_assessmould
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="assessmouldId != null">
+        assessmould_id,
+      </if>
+      <if test="assessmouldName != null">
+        assessmould_name,
+      </if>
+      <if test="assessmouldStaff != null">
+        assessmould_staff,
+      </if>
+      <if test="assessmouldMakedate != null">
+        assessmould_makeDate,
+      </if>
+      <if test="assessmouldEnable != null">
+        assessmould_enable,
+      </if>
+      <if test="assessmouldMemo != null">
+        assessmould_memo,
+      </if>
+      <if test="assessmouldTotal != null">
+        assessmould_total,
+      </if>
+      <if test="assessmouldType != null">
+        assessmould_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="assessmouldId != null">
+        #{assessmouldId,jdbcType=BIGINT},
+      </if>
+      <if test="assessmouldName != null">
+        #{assessmouldName,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmouldStaff != null">
+        #{assessmouldStaff.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="assessmouldMakedate != null">
+        #{assessmouldMakedate,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmouldEnable != null">
+        #{assessmouldEnable,jdbcType=CHAR},
+      </if>
+      <if test="assessmouldMemo != null">
+        #{assessmouldMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmouldTotal != null">
+        #{assessmouldTotal,jdbcType=BIGINT},
+      </if>
+      <if test="assessmouldType != null">
+        #{assessmouldType.dictId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.junchen.back.pojo.ErpAmAssessmouldExample" resultType="java.lang.Integer">
+    select count(*) from erp_am_assessmould
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update erp_am_assessmould
+    <set>
+      <if test="record.assessmouldId != null">
+        assessmould_id = #{record.assessmouldId,jdbcType=BIGINT},
+      </if>
+      <if test="record.assessmouldName != null">
+        assessmould_name = #{record.assessmouldName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.assessmouldStaff != null">
+        assessmould_staff = #{record.assessmouldStaff.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="record.assessmouldMakedate != null">
+        assessmould_makeDate = #{record.assessmouldMakedate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.assessmouldEnable != null">
+        assessmould_enable = #{record.assessmouldEnable,jdbcType=CHAR},
+      </if>
+      <if test="record.assessmouldMemo != null">
+        assessmould_memo = #{record.assessmouldMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.assessmouldTotal != null">
+        assessmould_total = #{record.assessmouldTotal,jdbcType=BIGINT},
+      </if>
+      <if test="record.assessmouldType != null">
+        assessmould_type = #{record.assessmouldType.dictId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update erp_am_assessmould
+    set assessmould_id = #{record.assessmouldId,jdbcType=BIGINT},
+      assessmould_name = #{record.assessmouldName,jdbcType=VARCHAR},
+      assessmould_staff = #{record.assessmouldStaff.staffId,jdbcType=BIGINT},
+      assessmould_makeDate = #{record.assessmouldMakedate,jdbcType=VARCHAR},
+      assessmould_enable = #{record.assessmouldEnable,jdbcType=CHAR},
+      assessmould_memo = #{record.assessmouldMemo,jdbcType=VARCHAR},
+      assessmould_total = #{record.assessmouldTotal,jdbcType=BIGINT},
+      assessmould_type = #{record.assessmouldType.dictId,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.junchen.back.pojo.ErpAmAssessmould">
+    update erp_am_assessmould
+    <set>
+      <if test="assessmouldName != null">
+        assessmould_name = #{assessmouldName,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmouldStaff != null">
+        assessmould_staff = #{assessmouldStaff.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="assessmouldMakedate != null">
+        assessmould_makeDate = #{assessmouldMakedate,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmouldEnable != null">
+        assessmould_enable = #{assessmouldEnable,jdbcType=CHAR},
+      </if>
+      <if test="assessmouldMemo != null">
+        assessmould_memo = #{assessmouldMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmouldTotal != null">
+        assessmould_total = #{assessmouldTotal,jdbcType=BIGINT},
+      </if>
+      <if test="assessmouldType != null">
+        assessmould_type = #{assessmouldType.dictId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where assessmould_id = #{assessmouldId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.junchen.back.pojo.ErpAmAssessmould">
+    update erp_am_assessmould
+    set assessmould_name = #{assessmouldName,jdbcType=VARCHAR},
+      assessmould_staff = #{assessmouldStaff.staffId,jdbcType=BIGINT},
+      assessmould_makeDate = #{assessmouldMakedate,jdbcType=VARCHAR},
+      assessmould_enable = #{assessmouldEnable,jdbcType=CHAR},
+      assessmould_memo = #{assessmouldMemo,jdbcType=VARCHAR},
+      assessmould_total = #{assessmouldTotal,jdbcType=BIGINT},
+      assessmould_type = #{assessmouldType.dictId,jdbcType=VARCHAR}
+    where assessmould_id = #{assessmouldId,jdbcType=BIGINT}
+  </update>
+ 
+</mapper>

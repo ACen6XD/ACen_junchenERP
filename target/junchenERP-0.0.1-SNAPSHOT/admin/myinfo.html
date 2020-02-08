@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>个人信息管理</title>
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/file-upload.css">
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+
+    	<!-- 引入angularjs插件 -->
+	<script src="../plugins/angularjs/angular.min.js"></script>  
+ 	<!-- 引入angulaerJS -->
+ 	<script src="../js/base.js"></script>
+ 	<script src="../js/controller/amStaffController.js"></script>
+ 	<script src="../js/controller/baseController.js"></script>
+ 	<script src="../js/service/amStaffService.js"></script>
+ 	<script src="../js/service/uploadService.js"></script>
+ 	<script src="../js/service/baseDictService.js"></script>
+ 	
+</head>
+<body class="hold-transition skin-red sidebar-mini" ng-app="junchen" ng-controller="amStaffController" ng-init="findLoginStaff();findDict()">
+  <!-- .box-body -->
+                    <div class="box-header with-border">
+                        <h3 class="box-title">个人信息管理</h3>
+                    </div>
+
+                    <div class="box-body">
+
+                        <!-- 数据表格 -->
+                        <div class="table-box">
+
+                            <!--工具栏-->
+                            <div class="pull-left">
+                                <div class="form-group form-inline">
+                                    <div class="btn-group">
+                                        <!-- <button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#editModal" ><i class="fa fa-file-o"></i> 新建</button> -->
+                                        <button type="button" class="btn btn-default" title="修改" data-toggle="modal" data-target="#editModal" ng-click="findLoginStaff();newRepeatHealhFiles=[];newRepeatContractFiles=[]"><i class="fa fa-trash-o"></i> 修改</button>           
+                                        <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-tools pull-right">
+                                <div class="has-feedback">
+							                                         
+                                </div>
+                            </div>
+                            <!--工具栏/-->
+
+			                  <!--数据列表-->
+			                  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+			                      <thead>
+			                          <tr >
+			                             <th colspan="2" ><font size="4">基本信息</font></th>
+			                          </tr>
+			                      </thead>
+			                      <tbody>
+			                      	<tr>
+			                              <td align="center" style="vertical-align: middle" ><strong>照片</strong></td>
+			                              <td  align="center">
+			                          
+			                              	<img ng-src="{{loginStaff.staffPhoto}}" class="img-circle" width="80px" height="80px">
+			                              </td>
+			                      	</tr>
+			                     
+			                          <tr>
+			                              <td align="center"><strong>姓名</strong></td>
+			                              <td align="center">{{loginStaff.staffName}}</td>
+			                          </tr>
+									 <tr>
+			                              <td align="center"><strong>性别</strong></td>
+			             
+			                              <td  align="center">{{loginStaff.staffGender}}</td>
+			                          </tr>
+			                          <tr>
+			                              <td align="center"><strong>电话</strong></td>
+			                              <td align="center"  >{{loginStaff.staffPhone}}</td>
+			                             
+			                          </tr>
+
+			                          <tr>
+			                              <td align="center"><strong>类型</strong></td>
+			                              <td align="center"  >
+											{{loginStaff.staffType.dictItemName}}
+										  </td>
+			                             
+			                          </tr>
+			                          
+			                          <tr>
+			                              <td align="center"><strong>部门</strong></td>
+			                              <td  align="center">{{loginStaff.staffDepartment.dictItemName}}</td>
+			                            
+			                          </tr>
+			                          
+			                          <tr>
+			                              <td align="center"><strong>职称</strong></td>
+			                              <td  align="center">{{loginStaff.staffTitles.dictItemName}}</td>
+			                             
+			                          </tr>
+			                          
+			                          <thead>
+			                          <tr >
+			                             <th colspan="2" ><font size="4">其他信息</font></th>
+			                          </tr>
+			                      </thead>
+			                      <tbody>
+			                          <tr>
+			                              <td align="center"><strong>学历</strong></td>
+			                              <td align="center">{{loginStaff.staffEducation.dictItemName}}</td>
+			                          </tr>
+									 <tr>
+			                              <td align="center"><strong>详细合同</strong></td>
+			  
+			                              <td  align="center">
+											<!-- 已存在的图片列表 -->
+				                         	<div ng-repeat="file in repeatContractFiles track by $index" style="margin:5px 0px 7px 0px">
+				                         		<a href="../{{file}}" target="_blank">详细合同({{$index+1}})</a>&nbsp;
+				                         	</div>
+										  </td>
+			                          </tr>
+			                          <tr>
+			                              <td align="center"><strong>健康报告</strong></td>
+			                              <td align="center"  >
+											 <!-- 已存在的图片列表 -->
+				                         	<div ng-repeat="file in repeatHealhFiles track by $index" style="margin:5px 0px 7px 0px">
+				                         		<a href="../{{file}}" target="_blank">健康报告({{$index+1}})</a>&nbsp;
+				                         	</div>
+										  </td>
+			                          </tr>
+			                        
+			                          <tr>
+			                          	  <td align="center"><strong>身份证号</strong></td>
+			                              <td align="center"  >{{loginStaff.staffCardid}}</td>
+			                          </tr>
+			                          <tr>
+			                              <td align="center"><strong>家庭住址</strong></td>
+			                              <td align="center"  >{{loginStaff.staffAddress}}</td>
+			                          
+			                          </tr>
+			                          <tr>
+				                         <td align="center"><strong>入职时间</strong></td>
+				                         <td align="center"  >{{loginStaff.staffIndate}}</td>
+				                     
+				                     </tr>
+			                      </tbody>
+			                  </table>
+			                  <!--数据列表/-->                        
+							  
+							 
+                        </div>
+                        <!-- 数据表格 /-->
+                        
+                        
+                        
+                        
+                     </div>
+                    <!-- /.box-body -->
+         
+<!-- 编辑窗口 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" >
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">个人信息编辑</h3>
+		</div>
+		<div class="modal-body">		
+			<table class="table table-bordered table-striped"  width="800px" border="1">
+				 <thead>
+                     <tr >
+                        <th colspan="2" ><font size="4">基本信息</font></th>
+                     </tr>
+                 </thead>
+                 <tbody>
+                 	<tr>
+                         <td align="center" style="vertical-align: middle" ><strong>照片</strong></td>
+                         <td  align="center" colspan="2">
+                         	<img ng-src="../{{loginStaff.staffPhoto}}" class="img-circle" width="80px" height="80px" style="display: block;margin: 0px 0px 6px 0px">
+                        	<input id="selectPhotoInputFiles" name="selectPhotoInputFiles" type="file" style="display:none"  multiple="multiple" >
+                         	<span class="glyphicon glyphicon-camera" ng-click="selectFile(0)" style="width: 30px;"></span>
+                         	<span class="glyphicon glyphicon-cloud-upload" ng-click="uploadStaffPhoto()" style="width: 30px;"></span>
+                         </td>
+                 	</tr>
+                 <!-- 	<TR>
+                         	<TD align="center">
+                         		<span class="glyphicon glyphicon-camera" ng-click="selectFile(0)" style="width: 30px;"></span>
+                         		<span class="glyphicon glyphicon-cloud-upload" ng-click="uploadStaffPhoto()" style="width: 30px;"></span>
+                         		<input type="button" value="选择文件" style="margin-left: 0px;display:inline" ng-click="selectFile(0)">
+                         		<input type="button" value="上传" style="margin-left: 0px;display:inline" accept="image/jpg,image/pdf" ng-click="uploadStaffPhoto()">
+                         	
+                         	</TD>
+
+                	</TR> -->
+                     <tr>
+                         <td align="center"><strong>姓名</strong></td>
+                         <td align="center"><input  class="form-control"  ng-model="loginStaff.staffName"></td>
+                     </tr>
+	 				<tr>
+                         <td align="center"><strong>性别</strong></td>
+        
+                         <td  align="center">
+                         	<input type="radio" name="staffGender" value="男" ng-model="loginStaff.staffGender" ng-checked="loginStaff.staffGender == '男'">男
+                         	&nbsp;&nbsp;&nbsp;&nbsp;
+                         	<input type="radio" name="staffGender" value="女" ng-model="loginStaff.staffGender" ng-checked="(loginStaff.staffGender =='女')">女
+                         </td>
+                     </tr>
+                     <tr>
+                         <td align="center"><strong>电话</strong></td>
+                         <td align="center"  ><input  class="form-control"  ng-model="loginStaff.staffPhone"></td>
+                        
+                     </tr>
+
+                     <tr>
+                         <td align="center"><strong>类型</strong></td>
+                         <td  align="center">
+                         	<select ng-model="loginStaff.staffType.dictId">
+								<option ng-repeat="pojo in staffTypeList" value="{{pojo.dictId}}" ng-selected="loginStaff.staffType.dictId == pojo.dictId">{{pojo.dictItemName}}</option>
+							</select>
+                         </td>
+                        
+                     </tr>
+                     
+                     <tr>
+                         <td align="center"><strong>部门</strong></td>
+                         <td  align="center">
+                         	<select ng-model="loginStaff.staffDepartment.dictId">
+								<option ng-repeat="pojo in staffDepartmentList" value="{{pojo.dictId}}" ng-selected="loginStaff.staffDepartment.dictId == pojo.dictId">{{pojo.dictItemName}}</option>
+							</select>
+                         </td>
+                       
+                     </tr>
+                     
+                     <tr>
+                         <td align="center"><strong>职称</strong></td>
+                        <td  align="center">
+                         	<select ng-model="loginStaff.staffTitles.dictId">
+								<option ng-repeat="pojo in staffTittleList" value="{{pojo.dictId}}" ng-selected="loginStaff.staffTitles.dictId == pojo.dictId">{{pojo.dictItemName}}</option>
+							</select>
+                         </td>
+                        
+                     </tr>
+                     </tbody>
+                 <thead>
+                     <tr >
+                        <th colspan="2" ><font size="4">其他信息</font></th>
+                     </tr>
+                 </thead>
+                 <tbody>
+                     <tr>
+                         <td align="center"><strong>学历</strong></td>
+                         <td align="center">
+							<select ng-model="loginStaff.staffEducation.dictId">
+								<option ng-repeat="pojo in staffEduList" value="{{pojo.dictId}}" ng-selected="loginStaff.staffEducation.dictId == pojo.dictId">{{pojo.dictItemName}}</option>
+							</select>
+						 </td>
+                     </tr>
+	 				 <tr>
+                         <td align="center"><strong>详细合同</strong></td>
+
+                         <td  align="center">
+                         <!-- 已存在的图片列表 -->
+                         	<div ng-repeat="file in repeatContractFiles track by $index" style="margin:5px 0px 7px 0px">
+                         		<a href="../{{file}}" target="_blank">详细合同({{$index+1}})</a>&nbsp;
+                         		<span ng-if="file" class="glyphicon glyphicon-remove" ng-click="delRepeatFiles(3,$index)"></span>
+                         	</div>
+                         	<!-- 新添加的图片列表 -->
+                         	<div ng-repeat="file in newRepeatContractFiles track by $index" style="margin:5px 0px 7px 0px">
+                         		{{file.name}}
+                         		<span ng-if="file" class="glyphicon glyphicon-remove" ng-click="delRepeatFiles(4,$index)"></span>
+                         	</div>
+                         	
+                        	<input id="selectContractInputFiles" name="selectContractInputFiles" type="file" style="display:none"  multiple="multiple" >
+                        	<span class="glyphicon glyphicon-camera" ng-click="selectFile(2)" style="width: 30px;"></span>
+                         	<span class="glyphicon glyphicon-cloud-upload" ng-click="uploadStaffHealthOrContract(2)" style="width: 30px;"></span>
+<!--                          	<input type="button" value="上传" style="margin-left: 0px;display:inline" accept="image/jpg,image/pdf" ng-click="uploadStaffHealthOrContract(2)">
+                        	<input type="button" value="选择文件" style="margin-left: 0px;display:inline" ng-click="selectFile(2)"> -->
+                         </td>
+                     </tr>
+                     <tr>
+                         <td align="center"><strong>健康报告</strong></td>
+                         <td align="center"  >
+                            <!-- 已存在的图片列表 -->
+                         	<div ng-repeat="file in repeatHealhFiles track by $index" style="margin:5px 0px 7px 0px">
+                         		<a href="../{{file}}" target="_blank">健康报告({{$index+1}})</a>&nbsp;
+                         		<span ng-if="file" class="glyphicon glyphicon-remove" ng-click="delRepeatFiles(1,$index)"></span>
+                         	</div>
+                         	<!-- 新添加的图片列表 -->
+                         	<div ng-repeat="file in newRepeatHealhFiles track by $index" style="margin:5px 0px 7px 0px">
+                         		{{file.name}}
+                         		<span ng-if="file" class="glyphicon glyphicon-remove" ng-click="delRepeatFiles(2,$index)"></span>
+                         	</div>
+                         	
+                        	<input id="selectHealthInputFiles" name="selectHealthInputFiles" type="file" style="display:none"  multiple="multiple" >
+                        	<span class="glyphicon glyphicon-camera" ng-click="selectFile(1)" style="width: 30px;"></span>
+                         	<span class="glyphicon glyphicon-cloud-upload" ng-click="uploadStaffHealthOrContract(1)" style="width: 30px;"></span>
+<!--                         	<input type="button" value="选择文件" style="margin-left: 0px;display:inline" ng-click="selectFile(1)">
+                         	<input type="button" value="上传" style="margin-left: 0px;display:inline" accept="image/jpg,image/pdf" ng-click="uploadStaffHealthOrContract(1)"> -->
+                        	
+                         </td>
+                     </tr>
+                   
+                     <tr>
+                     	  <td align="center"><strong>身份证号</strong></td>
+                         <td align="center"  ><input  class="form-control"  ng-model="loginStaff.staffCardid"></td>
+                     </tr>
+                     <tr>
+                         <td align="center"><strong>家庭住址</strong></td>
+                         <td align="center"  ><input  class="form-control"  ng-model="loginStaff.staffAddress"></td>
+                     
+                     </tr>
+                     
+                     
+                 </tbody>
+		    		      	
+			 </table>				
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="save()">保存</button>
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+   
+</body>
+</html>

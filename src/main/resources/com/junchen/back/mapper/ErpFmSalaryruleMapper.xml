@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.junchen.back.mapper.ErpFmSalaryruleMapper" >
+  <resultMap id="BaseResultMap" type="com.junchen.back.pojo.ErpFmSalaryrule" >
+    <id column="salaryrule_id" property="salaryruleId" jdbcType="BIGINT" />
+    <result column="salaryrule_staffname" property="salaryruleStaffname" jdbcType="VARCHAR" />
+    <result column="salaryrule_staffdep" property="salaryruleStaffdep" jdbcType="VARCHAR" />
+    <result column="salaryrule_salary" property="salaryruleSalary" jdbcType="BIGINT" />
+    <result column="salaryrule_base" property="salaryruleBase" jdbcType="BIGINT" />
+    <result column="salaryrule_social" property="salaryruleSocial" jdbcType="BIGINT" />
+    <result column="salaryrule_old" property="salaryruleOld" jdbcType="BIGINT" />
+    <result column="salaryrule_lose" property="salaryruleLose" jdbcType="BIGINT" />
+    <result column="salaryrule_medical" property="salaryruleMedical" jdbcType="BIGINT" />
+    <result column="salaryrule_injure" property="salaryruleInjure" jdbcType="BIGINT" />
+    <result column="salaryrule_baby" property="salaryruleBaby" jdbcType="BIGINT" />
+    <result column="salaryrule_fund" property="salaryruleFund" jdbcType="BIGINT" />
+    <result column="salaryrule_job" property="salaryruleJob" jdbcType="BIGINT" />
+    <result column="salaryrule_life" property="salaryruleLife" jdbcType="BIGINT" />
+    <result column="salaryrule_reward" property="salaryruleReward" jdbcType="BIGINT" />
+    <result column="salaryrule_age" property="salaryruleAge" jdbcType="BIGINT" />
+    <result column="salaryrule_other" property="salaryruleOther" jdbcType="BIGINT" />
+    <result column="salaryrule_total" property="salaryruleTotal" jdbcType="BIGINT" />
+    <result column="salaryrule_memo" property="salaryruleMemo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    salaryrule_id, salaryrule_staffname, salaryrule_staffdep, salaryrule_salary, salaryrule_base, 
+    salaryrule_social, salaryrule_old, salaryrule_lose, salaryrule_medical, salaryrule_injure, 
+    salaryrule_baby, salaryrule_fund, salaryrule_job, salaryrule_life, salaryrule_reward, 
+    salaryrule_age, salaryrule_other, salaryrule_total, salaryrule_memo
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.junchen.back.pojo.ErpFmSalaryruleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from erp_fm_salaryrule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from erp_fm_salaryrule
+    where salaryrule_id = #{salaryruleId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from erp_fm_salaryrule
+    where salaryrule_id = #{salaryruleId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.junchen.back.pojo.ErpFmSalaryruleExample" >
+    delete from erp_fm_salaryrule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.junchen.back.pojo.ErpFmSalaryrule" >
+    insert into erp_fm_salaryrule (salaryrule_id, salaryrule_staffname, 
+      salaryrule_staffdep, salaryrule_salary, salaryrule_base, 
+      salaryrule_social, salaryrule_old, salaryrule_lose, 
+      salaryrule_medical, salaryrule_injure, salaryrule_baby, 
+      salaryrule_fund, salaryrule_job, salaryrule_life, 
+      salaryrule_reward, salaryrule_age, salaryrule_other, 
+      salaryrule_total, salaryrule_memo)
+    values (#{salaryruleId,jdbcType=BIGINT}, #{salaryruleStaffname,jdbcType=VARCHAR}, 
+      #{salaryruleStaffdep,jdbcType=VARCHAR}, #{salaryruleSalary,jdbcType=BIGINT}, #{salaryruleBase,jdbcType=BIGINT}, 
+      #{salaryruleSocial,jdbcType=BIGINT}, #{salaryruleOld,jdbcType=BIGINT}, #{salaryruleLose,jdbcType=BIGINT}, 
+      #{salaryruleMedical,jdbcType=BIGINT}, #{salaryruleInjure,jdbcType=BIGINT}, #{salaryruleBaby,jdbcType=BIGINT}, 
+      #{salaryruleFund,jdbcType=BIGINT}, #{salaryruleJob,jdbcType=BIGINT}, #{salaryruleLife,jdbcType=BIGINT}, 
+      #{salaryruleReward,jdbcType=BIGINT}, #{salaryruleAge,jdbcType=BIGINT}, #{salaryruleOther,jdbcType=BIGINT}, 
+      #{salaryruleTotal,jdbcType=BIGINT}, #{salaryruleMemo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.junchen.back.pojo.ErpFmSalaryrule" >
+    insert into erp_fm_salaryrule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="salaryruleId != null" >
+        salaryrule_id,
+      </if>
+      <if test="salaryruleStaffname != null" >
+        salaryrule_staffname,
+      </if>
+      <if test="salaryruleStaffdep != null" >
+        salaryrule_staffdep,
+      </if>
+      <if test="salaryruleSalary != null" >
+        salaryrule_salary,
+      </if>
+      <if test="salaryruleBase != null" >
+        salaryrule_base,
+      </if>
+      <if test="salaryruleSocial != null" >
+        salaryrule_social,
+      </if>
+      <if test="salaryruleOld != null" >
+        salaryrule_old,
+      </if>
+      <if test="salaryruleLose != null" >
+        salaryrule_lose,
+      </if>
+      <if test="salaryruleMedical != null" >
+        salaryrule_medical,
+      </if>
+      <if test="salaryruleInjure != null" >
+        salaryrule_injure,
+      </if>
+      <if test="salaryruleBaby != null" >
+        salaryrule_baby,
+      </if>
+      <if test="salaryruleFund != null" >
+        salaryrule_fund,
+      </if>
+      <if test="salaryruleJob != null" >
+        salaryrule_job,
+      </if>
+      <if test="salaryruleLife != null" >
+        salaryrule_life,
+      </if>
+      <if test="salaryruleReward != null" >
+        salaryrule_reward,
+      </if>
+      <if test="salaryruleAge != null" >
+        salaryrule_age,
+      </if>
+      <if test="salaryruleOther != null" >
+        salaryrule_other,
+      </if>
+      <if test="salaryruleTotal != null" >
+        salaryrule_total,
+      </if>
+      <if test="salaryruleMemo != null" >
+        salaryrule_memo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="salaryruleId != null" >
+        #{salaryruleId,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleStaffname != null" >
+        #{salaryruleStaffname,jdbcType=VARCHAR},
+      </if>
+      <if test="salaryruleStaffdep != null" >
+        #{salaryruleStaffdep,jdbcType=VARCHAR},
+      </if>
+      <if test="salaryruleSalary != null" >
+        #{salaryruleSalary,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleBase != null" >
+        #{salaryruleBase,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleSocial != null" >
+        #{salaryruleSocial,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleOld != null" >
+        #{salaryruleOld,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleLose != null" >
+        #{salaryruleLose,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleMedical != null" >
+        #{salaryruleMedical,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleInjure != null" >
+        #{salaryruleInjure,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleBaby != null" >
+        #{salaryruleBaby,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleFund != null" >
+        #{salaryruleFund,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleJob != null" >
+        #{salaryruleJob,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleLife != null" >
+        #{salaryruleLife,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleReward != null" >
+        #{salaryruleReward,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleAge != null" >
+        #{salaryruleAge,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleOther != null" >
+        #{salaryruleOther,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleTotal != null" >
+        #{salaryruleTotal,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleMemo != null" >
+        #{salaryruleMemo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.junchen.back.pojo.ErpFmSalaryruleExample" resultType="java.lang.Integer" >
+    select count(*) from erp_fm_salaryrule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update erp_fm_salaryrule
+    <set >
+      <if test="record.salaryruleId != null" >
+        salaryrule_id = #{record.salaryruleId,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleStaffname != null" >
+        salaryrule_staffname = #{record.salaryruleStaffname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salaryruleStaffdep != null" >
+        salaryrule_staffdep = #{record.salaryruleStaffdep,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salaryruleSalary != null" >
+        salaryrule_salary = #{record.salaryruleSalary,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleBase != null" >
+        salaryrule_base = #{record.salaryruleBase,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleSocial != null" >
+        salaryrule_social = #{record.salaryruleSocial,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleOld != null" >
+        salaryrule_old = #{record.salaryruleOld,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleLose != null" >
+        salaryrule_lose = #{record.salaryruleLose,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleMedical != null" >
+        salaryrule_medical = #{record.salaryruleMedical,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleInjure != null" >
+        salaryrule_injure = #{record.salaryruleInjure,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleBaby != null" >
+        salaryrule_baby = #{record.salaryruleBaby,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleFund != null" >
+        salaryrule_fund = #{record.salaryruleFund,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleJob != null" >
+        salaryrule_job = #{record.salaryruleJob,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleLife != null" >
+        salaryrule_life = #{record.salaryruleLife,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleReward != null" >
+        salaryrule_reward = #{record.salaryruleReward,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleAge != null" >
+        salaryrule_age = #{record.salaryruleAge,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleOther != null" >
+        salaryrule_other = #{record.salaryruleOther,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleTotal != null" >
+        salaryrule_total = #{record.salaryruleTotal,jdbcType=BIGINT},
+      </if>
+      <if test="record.salaryruleMemo != null" >
+        salaryrule_memo = #{record.salaryruleMemo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update erp_fm_salaryrule
+    set salaryrule_id = #{record.salaryruleId,jdbcType=BIGINT},
+      salaryrule_staffname = #{record.salaryruleStaffname,jdbcType=VARCHAR},
+      salaryrule_staffdep = #{record.salaryruleStaffdep,jdbcType=VARCHAR},
+      salaryrule_salary = #{record.salaryruleSalary,jdbcType=BIGINT},
+      salaryrule_base = #{record.salaryruleBase,jdbcType=BIGINT},
+      salaryrule_social = #{record.salaryruleSocial,jdbcType=BIGINT},
+      salaryrule_old = #{record.salaryruleOld,jdbcType=BIGINT},
+      salaryrule_lose = #{record.salaryruleLose,jdbcType=BIGINT},
+      salaryrule_medical = #{record.salaryruleMedical,jdbcType=BIGINT},
+      salaryrule_injure = #{record.salaryruleInjure,jdbcType=BIGINT},
+      salaryrule_baby = #{record.salaryruleBaby,jdbcType=BIGINT},
+      salaryrule_fund = #{record.salaryruleFund,jdbcType=BIGINT},
+      salaryrule_job = #{record.salaryruleJob,jdbcType=BIGINT},
+      salaryrule_life = #{record.salaryruleLife,jdbcType=BIGINT},
+      salaryrule_reward = #{record.salaryruleReward,jdbcType=BIGINT},
+      salaryrule_age = #{record.salaryruleAge,jdbcType=BIGINT},
+      salaryrule_other = #{record.salaryruleOther,jdbcType=BIGINT},
+      salaryrule_total = #{record.salaryruleTotal,jdbcType=BIGINT},
+      salaryrule_memo = #{record.salaryruleMemo,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.junchen.back.pojo.ErpFmSalaryrule" >
+    update erp_fm_salaryrule
+    <set >
+      <if test="salaryruleStaffname != null" >
+        salaryrule_staffname = #{salaryruleStaffname,jdbcType=VARCHAR},
+      </if>
+      <if test="salaryruleStaffdep != null" >
+        salaryrule_staffdep = #{salaryruleStaffdep,jdbcType=VARCHAR},
+      </if>
+      <if test="salaryruleSalary != null" >
+        salaryrule_salary = #{salaryruleSalary,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleBase != null" >
+        salaryrule_base = #{salaryruleBase,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleSocial != null" >
+        salaryrule_social = #{salaryruleSocial,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleOld != null" >
+        salaryrule_old = #{salaryruleOld,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleLose != null" >
+        salaryrule_lose = #{salaryruleLose,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleMedical != null" >
+        salaryrule_medical = #{salaryruleMedical,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleInjure != null" >
+        salaryrule_injure = #{salaryruleInjure,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleBaby != null" >
+        salaryrule_baby = #{salaryruleBaby,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleFund != null" >
+        salaryrule_fund = #{salaryruleFund,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleJob != null" >
+        salaryrule_job = #{salaryruleJob,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleLife != null" >
+        salaryrule_life = #{salaryruleLife,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleReward != null" >
+        salaryrule_reward = #{salaryruleReward,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleAge != null" >
+        salaryrule_age = #{salaryruleAge,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleOther != null" >
+        salaryrule_other = #{salaryruleOther,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleTotal != null" >
+        salaryrule_total = #{salaryruleTotal,jdbcType=BIGINT},
+      </if>
+      <if test="salaryruleMemo != null" >
+        salaryrule_memo = #{salaryruleMemo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where salaryrule_id = #{salaryruleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.junchen.back.pojo.ErpFmSalaryrule" >
+    update erp_fm_salaryrule
+    set salaryrule_staffname = #{salaryruleStaffname,jdbcType=VARCHAR},
+      salaryrule_staffdep = #{salaryruleStaffdep,jdbcType=VARCHAR},
+      salaryrule_salary = #{salaryruleSalary,jdbcType=BIGINT},
+      salaryrule_base = #{salaryruleBase,jdbcType=BIGINT},
+      salaryrule_social = #{salaryruleSocial,jdbcType=BIGINT},
+      salaryrule_old = #{salaryruleOld,jdbcType=BIGINT},
+      salaryrule_lose = #{salaryruleLose,jdbcType=BIGINT},
+      salaryrule_medical = #{salaryruleMedical,jdbcType=BIGINT},
+      salaryrule_injure = #{salaryruleInjure,jdbcType=BIGINT},
+      salaryrule_baby = #{salaryruleBaby,jdbcType=BIGINT},
+      salaryrule_fund = #{salaryruleFund,jdbcType=BIGINT},
+      salaryrule_job = #{salaryruleJob,jdbcType=BIGINT},
+      salaryrule_life = #{salaryruleLife,jdbcType=BIGINT},
+      salaryrule_reward = #{salaryruleReward,jdbcType=BIGINT},
+      salaryrule_age = #{salaryruleAge,jdbcType=BIGINT},
+      salaryrule_other = #{salaryruleOther,jdbcType=BIGINT},
+      salaryrule_total = #{salaryruleTotal,jdbcType=BIGINT},
+      salaryrule_memo = #{salaryruleMemo,jdbcType=VARCHAR}
+    where salaryrule_id = #{salaryruleId,jdbcType=BIGINT}
+  </update>
+</mapper>

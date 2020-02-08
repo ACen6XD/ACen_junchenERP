@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.junchen.back.mapper.ErpAmStaffMapper" >
+  
+  <resultMap id="BaseResultMap" type="ErpAmStaff" >
+    <id column="staff_id" property="staffId" jdbcType="BIGINT" />
+    <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
+    <result column="staff_gender" property="staffGender" jdbcType="VARCHAR" />
+    <result column="staff_cardid" property="staffCardid" jdbcType="VARCHAR" />
+    <result column="staff_phone" property="staffPhone" jdbcType="VARCHAR" />
+    <result column="staff_address" property="staffAddress" jdbcType="VARCHAR" />
+    <result column="staff_photo" property="staffPhoto" jdbcType="VARCHAR" />
+    <result column="staff_contract" property="staffContract" jdbcType="VARCHAR" />
+    <result column="staff_health" property="staffHealth" jdbcType="VARCHAR" />
+    <result column="staff_enable" property="staffEnable" jdbcType="CHAR" />
+    <result column="staff_indate" jdbcType="VARCHAR" property="staffIndate" />
+    <result column="staff_outdate" jdbcType="VARCHAR" property="staffOutdate" />
+    <association column="staff_type" property="staffType" select="TypeSelect"/> 
+
+    <association property="staffDepartment" column="staff_department" select="TypeSelect"/>
+    	
+    <association property="staffTitles" column="staff_titles" select="TypeSelect" />	
+    
+    <association property="staffEducation" column="staff_education" select="TypeSelect" />
+    
+  </resultMap>
+ <resultMap type="com.junchen.back.pojo.ErpSysBasedict" id="staff_Type">
+ 		<id column="dict_id" property="dictId" jdbcType="VARCHAR" />
+	    <result column="dict_type_code" property="dictTypeCode" jdbcType="VARCHAR" />
+	    <result column="dict_type_name" property="dictTypeName" jdbcType="VARCHAR" />
+	    <result column="dict_item_code" property="dictItemCode" jdbcType="VARCHAR" />
+	    <result column="dict_item_name" property="dictItemName" jdbcType="VARCHAR" />
+	    <result column="dict_memo" property="dictMemo" jdbcType="VARCHAR" />
+	    <result column="dict_sort" property="dictSort" jdbcType="INTEGER" />
+	    <result column="dict_enable" property="dictEnable" jdbcType="CHAR" />
+ </resultMap>
+ <select id="TypeSelect" resultMap="staff_Type">
+ 	SELECT `erp_sys_basedict`.`dict_id`,
+		    `erp_sys_basedict`.`dict_type_code`,
+		    `erp_sys_basedict`.`dict_type_name`,
+		    `erp_sys_basedict`.`dict_item_code`,
+		    `erp_sys_basedict`.`dict_item_name`,
+		    `erp_sys_basedict`.`dict_memo`,
+		    `erp_sys_basedict`.`dict_sort`,
+		    `erp_sys_basedict`.`dict_enable`
+	FROM `erp`.`erp_sys_basedict`
+	where dict_id  =#{id};
+ </select>
+  <sql id="Base_Column_List" >
+    staff_id, staff_name, staff_gender, staff_cardid, staff_phone, staff_address,staff_type,staff_department, staff_titles,
+     staff_photo, staff_contract, staff_education, staff_health, 
+    staff_enable,staff_indate, staff_outdate
+  </sql>
+  
+  <sql id="Example_Where_Clause" >
+    <!-- <where > -->
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+   <!--  </where> -->
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+
+
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.junchen.back.pojo.ErpAmStaffExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from erp_am_staff
+    <where>
+	    <if test="_parameter != null" >
+	      <include refid="Example_Where_Clause" />
+	    </if>
+		and staff_enable != '0'    
+    </where>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from erp_am_staff
+    where staff_id = #{staffId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from erp_am_staff
+    where staff_id = #{staffId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.junchen.back.pojo.ErpAmStaffExample" >
+    delete from erp_am_staff
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.junchen.back.pojo.ErpAmStaff" >
+    insert into erp_am_staff (staff_id, staff_name, staff_gender, 
+      staff_cardid, staff_phone, staff_address, 
+      staff_type, staff_department, staff_titles, 
+      staff_photo, staff_contract, staff_education, 
+      staff_health, staff_enable, staff_indate, 
+      staff_outdate)
+    values (#{staffId,jdbcType=BIGINT}, #{staffName,jdbcType=VARCHAR}, #{staffGender,jdbcType=VARCHAR}, 
+      #{staffCardid,jdbcType=VARCHAR}, #{staffPhone,jdbcType=VARCHAR}, #{staffAddress,jdbcType=VARCHAR}, 
+      #{staffType.dictId,jdbcType=VARCHAR}, #{staffDepartment.dictId,jdbcType=VARCHAR}, #{staffTitles.dictId,jdbcType=VARCHAR}, 
+      #{staffPhoto,jdbcType=VARCHAR}, #{staffContract,jdbcType=VARCHAR}, #{staffEducation.dictId,jdbcType=VARCHAR}, 
+      #{staffHealth,jdbcType=VARCHAR}, #{staffEnable,jdbcType=CHAR}, #{staffIndate,jdbcType=VARCHAR}, 
+      #{staffOutdate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.junchen.back.pojo.ErpAmStaff" >
+    insert into erp_am_staff
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="staffId != null" >
+        staff_id,
+      </if>
+      <if test="staffName != null" >
+        staff_name,
+      </if>
+      <if test="staffGender != null" >
+        staff_gender,
+      </if>
+      <if test="staffCardid != null" >
+        staff_cardid,
+      </if>
+      <if test="staffPhone != null" >
+        staff_phone,
+      </if>
+      <if test="staffAddress != null" >
+        staff_address,
+      </if>
+      <if test="staffType != null" >
+        staff_type,
+      </if>
+      <if test="staffDepartment != null" >
+        staff_department,
+      </if>
+      <if test="staffTitles != null" >
+        staff_titles,
+      </if>
+      <if test="staffPhoto != null" >
+        staff_photo,
+      </if>
+      <if test="staffContract != null" >
+        staff_contract,
+      </if>
+      <if test="staffEducation != null" >
+        staff_education,
+      </if>
+      <if test="staffHealth != null" >
+        staff_health,
+      </if>
+      <if test="staffEnable != null" >
+        staff_enable,
+      </if>
+      <if test="staffIndate != null">
+        staff_indate,
+      </if>
+      <if test="staffOutdate != null">
+        staff_outdate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="staffId != null" >
+        #{staffId,jdbcType=BIGINT},
+      </if>
+      <if test="staffName != null" >
+        #{staffName,jdbcType=VARCHAR},
+      </if>
+      <if test="staffGender != null" >
+        #{staffGender,jdbcType=VARCHAR},
+      </if>
+      <if test="staffCardid != null" >
+        #{staffCardid,jdbcType=VARCHAR},
+      </if>
+      <if test="staffPhone != null" >
+        #{staffPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="staffAddress != null" >
+        #{staffAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="staffType != null" >
+        #{staffType.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffDepartment != null" >
+        #{staffDepartment.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffTitles != null" >
+        #{staffTitles.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffPhoto != null" >
+        #{staffPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="staffContract != null" >
+        #{staffContract,jdbcType=VARCHAR},
+      </if>
+      <if test="staffEducation != null" >
+        #{staffEducation.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffHealth != null" >
+        #{staffHealth,jdbcType=VARCHAR},
+      </if>
+      <if test="staffEnable != null" >
+        #{staffEnable,jdbcType=CHAR},
+      </if>
+      
+       <if test="staffIndate != null">
+        #{staffIndate,jdbcType=VARCHAR},
+      </if>
+      <if test="staffOutdate != null">
+        #{staffOutdate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.junchen.back.pojo.ErpAmStaffExample" resultType="java.lang.Integer" >
+    select count(*) from erp_am_staff
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update erp_am_staff
+    <set >
+      <if test="record.staffId != null" >
+        staff_id = #{record.staffId,jdbcType=BIGINT},
+      </if>
+      <if test="record.staffName != null" >
+        staff_name = #{record.staffName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffGender != null" >
+        staff_gender = #{record.staffGender,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffCardid != null" >
+        staff_cardid = #{record.staffCardid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffPhone != null" >
+        staff_phone = #{record.staffPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffAddress != null" >
+        staff_address = #{record.staffAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffType != null" >
+        staff_type = #{record.staffType.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffDepartment != null" >
+        staff_department = #{record.staffDepartment.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffTitles != null" >
+        staff_titles = #{record.staffTitles.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffPhoto != null" >
+        staff_photo = #{record.staffPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffContract != null" >
+        staff_contract = #{record.staffContract,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffEducation != null" >
+        staff_education = #{record.staffEducation.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffHealth != null" >
+        staff_health = #{record.staffHealth,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffEnable != null" >
+        staff_enable = #{record.staffEnable,jdbcType=CHAR},
+      </if>
+      <if test="record.staffIndate != null">
+        staff_indate = #{record.staffIndate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.staffOutdate != null">
+        staff_outdate = #{record.staffOutdate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update erp_am_staff
+    set staff_id = #{record.staffId,jdbcType=BIGINT},
+      staff_name = #{record.staffName,jdbcType=VARCHAR},
+      staff_gender = #{record.staffGender,jdbcType=VARCHAR},
+      staff_cardid = #{record.staffCardid,jdbcType=VARCHAR},
+      staff_phone = #{record.staffPhone,jdbcType=VARCHAR},
+      staff_address = #{record.staffAddress,jdbcType=VARCHAR},
+      staff_type = #{record.staffType.dictId,jdbcType=VARCHAR},
+      staff_department = #{record.staffDepartment.dictId,jdbcType=VARCHAR},
+      staff_titles = #{record.staffTitles.dictId,jdbcType=VARCHAR},
+      staff_photo = #{record.staffPhoto,jdbcType=VARCHAR},
+      staff_contract = #{record.staffContract,jdbcType=VARCHAR},
+      staff_education = #{record.staffEducation.dictId,jdbcType=VARCHAR},
+      staff_health = #{record.staffHealth,jdbcType=VARCHAR},
+      staff_enable = #{record.staffEnable,jdbcType=CHAR},
+       staff_indate = #{record.staffIndate,jdbcType=VARCHAR},
+      staff_outdate = #{record.staffOutdate,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.junchen.back.pojo.ErpAmStaff" >
+    update erp_am_staff
+    <set >
+      <if test="staffName != null" >
+        staff_name = #{staffName,jdbcType=VARCHAR},
+      </if>
+      <if test="staffGender != null" >
+        staff_gender = #{staffGender,jdbcType=VARCHAR},
+      </if>
+      <if test="staffCardid != null" >
+        staff_cardid = #{staffCardid,jdbcType=VARCHAR},
+      </if>
+      <if test="staffPhone != null" >
+        staff_phone = #{staffPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="staffAddress != null" >
+        staff_address = #{staffAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="staffType != null" >
+        staff_type = #{staffType.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffDepartment != null" >
+        staff_department = #{staffDepartment.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffTitles != null" >
+        staff_titles = #{staffTitles.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffPhoto != null" >
+        staff_photo = #{staffPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="staffContract != null" >
+        staff_contract = #{staffContract,jdbcType=VARCHAR},
+      </if>
+      <if test="staffEducation != null" >
+        staff_education = #{staffEducation.dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffHealth != null" >
+        staff_health = #{staffHealth,jdbcType=VARCHAR},
+      </if>
+      <if test="staffEnable != null" >
+        staff_enable = #{staffEnable,jdbcType=CHAR},
+      </if>
+      <if test="staffIndate != null">
+        staff_indate = #{staffIndate,jdbcType=VARCHAR},
+      </if>
+      <if test="staffOutdate != null">
+        staff_outdate = #{staffOutdate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where staff_id = #{staffId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.junchen.back.pojo.ErpAmStaff" >
+    update erp_am_staff
+    set staff_name = #{staffName,jdbcType=VARCHAR},
+      staff_gender = #{staffGender,jdbcType=VARCHAR},
+      staff_cardid = #{staffCardid,jdbcType=VARCHAR},
+      staff_phone = #{staffPhone,jdbcType=VARCHAR},
+      staff_address = #{staffAddress,jdbcType=VARCHAR},
+      staff_type = #{staffType.dictId,jdbcType=VARCHAR},
+      staff_department = #{staffDepartment.dictId,jdbcType=VARCHAR},
+      staff_titles = #{staffTitles.dictId,jdbcType=VARCHAR},
+      staff_photo = #{staffPhoto,jdbcType=VARCHAR},
+      staff_contract = #{staffContract,jdbcType=VARCHAR},
+      staff_education = #{staffEducation.dictId,jdbcType=VARCHAR},
+      staff_health = #{staffHealth,jdbcType=VARCHAR},
+      staff_enable = #{staffEnable,jdbcType=CHAR},
+      staff_indate = #{staffIndate,jdbcType=VARCHAR},
+      staff_outdate = #{staffOutdate,jdbcType=VARCHAR}
+    where staff_id = #{staffId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="findLoginStaff"  resultMap="BaseResultMap" parameterType="java.lang.Long">
+	SELECT 
+	<include refid="Base_Column_List"></include>
+	FROM erp.erp_am_staff 
+	<where>
+	staff_id IN (
+		select user_staffid 
+		from erp_sys_user
+		where user_id = #{loginId});
+	</where>
+  </select>
+  
+  <select id="findQuitList" resultMap="BaseResultMap" >
+  	select 
+  	<include refid="Base_Column_List"></include>
+	FROM erp.erp_am_staff 
+	<where>
+		staff_enable = '0'
+	</where>
+  </select>
+  
+  
+</mapper>
